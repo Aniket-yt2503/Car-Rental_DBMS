@@ -17,6 +17,7 @@ const errorClass = 'mt-1 text-xs text-red-400'
 
 export default function BookingWidget() {
   const { dispatch } = useAppContext()
+  const todayStr = new Date().toISOString().split('T')[0];
 
   const [form, setForm] = useState({
     pickupLocation: '',
@@ -76,13 +77,13 @@ export default function BookingWidget() {
 
           <div>
             <label className={labelClass} htmlFor="pickupDate">Pickup Date</label>
-            <input id="pickupDate" type="date" name="pickupDate" value={form.pickupDate} onChange={handleChange} className={inputClass + ' [color-scheme:dark]'} />
+            <input id="pickupDate" type="date" name="pickupDate" value={form.pickupDate} min={todayStr} onChange={handleChange} className={inputClass + ' [color-scheme:dark]'} />
             {errors.pickupDate && <p className={errorClass}>{errors.pickupDate}</p>}
           </div>
 
           <div>
             <label className={labelClass} htmlFor="returnDate">Return Date</label>
-            <input id="returnDate" type="date" name="returnDate" value={form.returnDate} onChange={handleChange} className={inputClass + ' [color-scheme:dark]'} />
+            <input id="returnDate" type="date" name="returnDate" value={form.returnDate} min={form.pickupDate || todayStr} onChange={handleChange} className={inputClass + ' [color-scheme:dark]'} />
             {errors.returnDate && <p className={errorClass}>{errors.returnDate}</p>}
           </div>
 

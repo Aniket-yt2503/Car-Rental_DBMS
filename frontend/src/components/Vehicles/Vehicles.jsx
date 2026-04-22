@@ -131,16 +131,37 @@ export default function Vehicles() {
 
       <div className="max-w-7xl mx-auto">
         {/* Filters */}
-        <div className="flex flex-col gap-3 mb-5">
-          <div className="flex flex-wrap gap-2 justify-center">
-            {CAR_CLASSES.map(cls => (
-              <FilterButton key={cls} label={cls} active={activeClassFilter === cls} onClick={() => setActiveClassFilter(cls)} />
-            ))}
+        <div className="flex flex-col sm:flex-row justify-center gap-4 mb-8">
+          <div className="relative">
+            <select
+              value={activeClassFilter}
+              onChange={(e) => setActiveClassFilter(e.target.value)}
+              className="w-full sm:w-48 px-4 py-2.5 rounded-xl text-sm font-medium border outline-none bg-[rgba(124,58,237,0.1)] border-[rgba(124,58,237,0.2)] text-white focus:border-[rgba(124,58,237,0.6)] cursor-pointer appearance-none transition-colors"
+            >
+              <option value="All" className="bg-gray-900">All Categories</option>
+              {CAR_CLASSES.filter(c => c !== 'All').map(cls => (
+                <option key={cls} value={cls} className="bg-gray-900">{cls}</option>
+              ))}
+            </select>
+            <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none">
+              <svg className="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+            </div>
           </div>
-          <div className="flex flex-wrap gap-2 justify-center">
-            {locationOptions.map(loc => (
-              <FilterButton key={loc} label={loc} active={activeLocationFilter === loc} onClick={() => setActiveLocationFilter(loc)} />
-            ))}
+
+          <div className="relative">
+            <select
+              value={activeLocationFilter}
+              onChange={(e) => setActiveLocationFilter(e.target.value)}
+              className="w-full sm:w-48 px-4 py-2.5 rounded-xl text-sm font-medium border outline-none bg-[rgba(124,58,237,0.1)] border-[rgba(124,58,237,0.2)] text-white focus:border-[rgba(124,58,237,0.6)] cursor-pointer appearance-none transition-colors"
+            >
+              <option value="All" className="bg-gray-900">All Locations</option>
+              {locationOptions.filter(l => l !== 'All').map(loc => (
+                <option key={loc} value={loc} className="bg-gray-900">{loc}</option>
+              ))}
+            </select>
+            <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none">
+              <svg className="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+            </div>
           </div>
         </div>
 
