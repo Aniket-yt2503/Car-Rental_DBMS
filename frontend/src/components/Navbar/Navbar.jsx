@@ -30,10 +30,10 @@ function NavLink({ item, onNavigate }) {
       onClick={() => onNavigate(item)}
       className={`font-medium text-sm transition-all duration-200 cursor-pointer bg-transparent border-none outline-none whitespace-nowrap ${
         isSupport
-          ? 'text-purple-400 hover:text-purple-300'
+          ? 'text-amber-500/80 hover:text-amber-400'
           : isActive
           ? 'text-white'
-          : 'text-gray-400 hover:text-white'
+          : 'text-slate-500 hover:text-white'
       }`}
     >
       {isSupport ? '🤖 ' : ''}{item.label}
@@ -113,20 +113,20 @@ export default function Navbar() {
           paddingRight: '1.5rem',
           paddingTop: '0.75rem',
           paddingBottom: '0.75rem',
-          backgroundColor: 'rgba(2,2,8,0.92)',
-          borderBottom: '1px solid rgba(124,58,237,0.2)',
+          backgroundColor: 'rgba(10,10,10,0.95)',
+          borderBottom: '1px solid rgba(255,255,255,0.08)',
         } : {
           top: '1.25rem',
           left: '50%',
           x: '-50%',
-          width: 'min(980px, calc(100vw - 2rem))',
+          width: 'min(1080px, calc(100vw - 2rem))',
           borderRadius: '9999px',
           paddingLeft: '1.5rem',
           paddingRight: '1.5rem',
           paddingTop: '0.625rem',
           paddingBottom: '0.625rem',
-          backgroundColor: 'rgba(124,58,237,0.06)',
-          borderBottom: '1px solid rgba(124,58,237,0.18)',
+          backgroundColor: 'rgba(255,255,255,0.03)',
+          borderBottom: '1px solid rgba(255,255,255,0.1)',
         }}
         transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
         className="fixed z-50 flex items-center backdrop-blur-xl border justify-between md:justify-start"
@@ -134,13 +134,13 @@ export default function Navbar() {
       >
         <button
           onClick={() => handleNavigate({ route: '/', anchor: null })}
-          className="cursor-pointer bg-transparent border-none outline-none shrink-0 md:mr-5"
+          className="cursor-pointer bg-transparent border-none outline-none shrink-0 md:mr-8"
         >
-          <span className="font-black text-lg tracking-widest phantom-text">Phantom Ride</span>
+          <span className="font-black text-xl tracking-[0.15em] uppercase text-white">Midnight Ride</span>
         </button>
 
         {/* Desktop Nav links */}
-        <div className="hidden md:flex items-center gap-3 md:gap-5 flex-1 justify-center">
+        <div className="hidden md:flex items-center gap-3 md:gap-7 flex-1 justify-center">
           {NAV_ITEMS.map(item => (
             <NavLink key={item.label} item={item} onNavigate={handleNavigate} />
           ))}
@@ -149,12 +149,12 @@ export default function Navbar() {
         {/* Desktop Book Now */}
         <motion.button
           onClick={handleBookNow}
-          whileHover={{ scale: 1.05, boxShadow: '0 0 25px rgba(124,58,237,0.7), 0 0 50px rgba(124,58,237,0.3)' }}
+          whileHover={{ scale: 1.05, background: '#ffffff', color: '#000000' }}
           whileTap={{ scale: 0.96 }}
-          className="hidden md:block shrink-0 ml-5 px-4 py-1.5 rounded-full text-sm font-semibold text-white cursor-pointer border-none outline-none relative overflow-hidden"
-          style={{ background: 'linear-gradient(135deg,#7c3aed,#06b6d4)' }}
+          className="hidden md:block shrink-0 ml-5 px-6 py-2 rounded-full text-xs font-bold tracking-widest uppercase text-white cursor-pointer border border-white/20 outline-none transition-all duration-300"
+          style={{ background: 'rgba(255,255,255,0.05)' }}
         >
-          <span className="relative z-10">Book Now</span>
+          Book Now
         </motion.button>
 
         {/* Mobile Hamburger Toggle */}
@@ -179,22 +179,21 @@ export default function Navbar() {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="fixed inset-0 z-40 bg-[rgba(2,2,8,0.98)] backdrop-blur-3xl pt-24 pb-10 px-6 flex flex-col overflow-y-auto"
+            className="fixed inset-0 z-40 bg-[rgba(5,5,5,0.98)] backdrop-blur-3xl pt-24 pb-10 px-6 flex flex-col overflow-y-auto"
           >
-            <div className="flex flex-col gap-6 items-center mt-10">
+            <div className="flex flex-col gap-8 items-center mt-10">
               {NAV_ITEMS.map(item => (
                 <button
                   key={item.label}
                   onClick={() => handleNavigate(item)}
-                  className="text-2xl font-bold text-white/70 hover:text-white transition-colors"
+                  className="text-2xl font-bold text-white/60 hover:text-white transition-colors tracking-widest uppercase"
                 >
                   {item.label}
                 </button>
               ))}
               <motion.button
                 onClick={handleBookNow}
-                className="mt-8 px-8 py-4 rounded-full text-lg font-bold text-white shadow-[0_0_40px_rgba(124,58,237,0.5)]"
-                style={{ background: 'linear-gradient(135deg,#7c3aed,#06b6d4)' }}
+                className="mt-8 px-10 py-4 rounded-full text-lg font-black uppercase tracking-widest text-black bg-white"
               >
                 Book Now
               </motion.button>

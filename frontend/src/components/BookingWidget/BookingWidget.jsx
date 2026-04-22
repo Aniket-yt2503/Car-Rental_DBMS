@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import GlassCard from '../ui/GlassCard.jsx'
-import NeonButton from '../ui/NeonButton.jsx'
-import { validateBookingForm, getLocalTodayString } from '../../utils/validation.js'
+import SleekButton from '../ui/SleekButton.jsx'
+import { validateBookingForm, getLocalTodayString, getLocalMaxDateString } from '../../utils/validation.js'
 import { useAppContext } from '../../context/AppContext.jsx'
 import locations from '../../data/locations.js'
 
@@ -9,15 +9,15 @@ const CAR_CLASSES = ['Subcompact', 'Compact', 'Sedan', 'Luxury']
 
 const inputClass =
   'w-full border text-white rounded-lg px-3 py-2 text-sm outline-none transition-all placeholder-white/25 ' +
-  'bg-[rgba(124,58,237,0.06)] border-[rgba(124,58,237,0.2)] focus:border-[rgba(124,58,237,0.6)] focus:ring-1 focus:ring-[rgba(124,58,237,0.3)] focus:shadow-[0_0_15px_rgba(124,58,237,0.2)]'
+  'bg-white/5 border-white/10 focus:border-white/30 focus:ring-1 focus:ring-white/20 focus:shadow-[0_0_15px_rgba(255,255,255,0.05)]'
 
-const labelClass = 'block text-xs font-medium mb-1 tracking-wide' +
-  ' text-[rgba(196,181,253,0.7)]'
-const errorClass = 'mt-1 text-xs text-red-400'
+const labelClass = 'block text-xs font-medium mb-1 tracking-wide text-slate-400'
+const errorClass = 'mt-1 text-xs text-amber-500'
 
 export default function BookingWidget() {
   const { dispatch } = useAppContext()
   const todayStr = getLocalTodayString();
+  const maxDateStr = getLocalMaxDateString();
 
   const [form, setForm] = useState({
     pickupLocation: '',
@@ -59,8 +59,8 @@ export default function BookingWidget() {
           <div>
             <label className={labelClass} htmlFor="pickupLocation">Pickup Location</label>
             <select id="pickupLocation" name="pickupLocation" value={form.pickupLocation} onChange={handleChange} className={inputClass}>
-              <option value="" disabled className="bg-gray-900">Select location</option>
-              {locations.map(loc => <option key={loc.id} value={loc.id} className="bg-gray-900">{loc.name}</option>)}
+              <option value="" disabled className="bg-slate-900">Select location</option>
+              {locations.map(loc => <option key={loc.id} value={loc.id} className="bg-slate-900">{loc.name}</option>)}
             </select>
             {errors.pickupLocation && <p className={errorClass}>{errors.pickupLocation}</p>}
           </div>
@@ -68,8 +68,8 @@ export default function BookingWidget() {
           <div>
             <label className={labelClass} htmlFor="returnLocation">Return Location</label>
             <select id="returnLocation" name="returnLocation" value={form.returnLocation} onChange={handleChange} className={inputClass}>
-              <option value="" disabled className="bg-gray-900">Select location</option>
-              {locations.map(loc => <option key={loc.id} value={loc.id} className="bg-gray-900">{loc.name}</option>)}
+              <option value="" disabled className="bg-slate-900">Select location</option>
+              {locations.map(loc => <option key={loc.id} value={loc.id} className="bg-slate-900">{loc.name}</option>)}
             </select>
             {errors.returnLocation && <p className={errorClass}>{errors.returnLocation}</p>}
             {showDropOffHint && <p className="mt-1 text-xs text-amber-400">Drop-off charge may apply</p>}
@@ -77,13 +77,13 @@ export default function BookingWidget() {
 
           <div>
             <label className={labelClass} htmlFor="pickupDate">Pickup Date</label>
-            <input id="pickupDate" type="date" name="pickupDate" value={form.pickupDate} min={todayStr} onChange={handleChange} className={inputClass + ' [color-scheme:dark]'} />
+            <input id="pickupDate" type="date" name="pickupDate" value={form.pickupDate} min={todayStr} max={maxDateStr} onChange={handleChange} className={inputClass + ' [color-scheme:dark]'} />
             {errors.pickupDate && <p className={errorClass}>{errors.pickupDate}</p>}
           </div>
 
           <div>
             <label className={labelClass} htmlFor="returnDate">Return Date</label>
-            <input id="returnDate" type="date" name="returnDate" value={form.returnDate} min={form.pickupDate || todayStr} onChange={handleChange} className={inputClass + ' [color-scheme:dark]'} />
+            <input id="returnDate" type="date" name="returnDate" value={form.returnDate} min={form.pickupDate || todayStr} max={maxDateStr} onChange={handleChange} className={inputClass + ' [color-scheme:dark]'} />
             {errors.returnDate && <p className={errorClass}>{errors.returnDate}</p>}
           </div>
 
@@ -95,8 +95,8 @@ export default function BookingWidget() {
                   ? 'text-white'
                   : 'text-white/50 hover:text-white/80'}`}
                   style={form.requestedClass === cls
-                    ? { border: '1px solid rgba(124,58,237,0.7)', background: 'rgba(124,58,237,0.2)', boxShadow: '0 0 12px rgba(124,58,237,0.3)' }
-                    : { border: '1px solid rgba(124,58,237,0.15)', background: 'rgba(124,58,237,0.04)' }
+                    ? { border: '1px solid rgba(255,255,255,0.3)', background: 'rgba(255,255,255,0.08)', boxShadow: '0 0 12px rgba(255,255,255,0.05)' }
+                    : { border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.02)' }
                   }
                 >
                   <input type="radio" name="requestedClass" value={cls} checked={form.requestedClass === cls} onChange={handleChange} className="sr-only" />
@@ -109,7 +109,7 @@ export default function BookingWidget() {
 
         <div className="mt-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <p className="text-xs text-white/40 italic">Higher class may be assigned at same price.</p>
-          <NeonButton type="submit" className="w-full sm:w-auto">Search Vehicles</NeonButton>
+          <SleekButton type="submit" className="w-full sm:w-auto">Search Vehicles</SleekButton>
         </div>
       </form>
     </GlassCard>

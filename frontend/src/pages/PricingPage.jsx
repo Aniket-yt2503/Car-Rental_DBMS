@@ -1,4 +1,4 @@
-﻿import { Suspense, useRef, useState, useEffect, useMemo } from "react"
+import { Suspense, useRef, useState, useEffect, useMemo } from "react"
 import { Canvas, useFrame } from "@react-three/fiber"
 import { Environment, Float, MeshDistortMaterial, Sphere } from "@react-three/drei"
 import { motion, AnimatePresence } from "framer-motion"
@@ -7,8 +7,7 @@ import { getPricing } from "../api/pricing.js"
 import { useNavigate } from "react-router-dom"
 import useLenis from "../hooks/useLenis.js"
 import Footer from "../components/Footer/Footer.jsx"
-import NeonButton from "../components/ui/NeonButton.jsx"
-import NeonBadge from "../components/ui/NeonBadge.jsx"
+import SleekButton from "../components/ui/SleekButton.jsx"
 
 // ── Three.js background scene ─────────────────────────────────────────────────
 function FloatingOrb({ position, color, speed, distort, scale }) {
@@ -24,13 +23,13 @@ function FloatingOrb({ position, color, speed, distort, scale }) {
         <MeshDistortMaterial
           color={color}
           emissive={color}
-          emissiveIntensity={0.4}
+          emissiveIntensity={0.3}
           distort={distort}
-          speed={2}
+          speed={1.5}
           transparent
-          opacity={0.18}
-          roughness={0.1}
-          metalness={0.8}
+          opacity={0.12}
+          roughness={0}
+          metalness={1}
         />
       </Sphere>
     </Float>
@@ -39,14 +38,14 @@ function FloatingOrb({ position, color, speed, distort, scale }) {
 
 function ParticleField() {
   const pointsRef = useRef()
-  const count = 320
+  const count = 400
 
   const positions = useMemo(() => {
     const arr = new Float32Array(count * 3)
     for (let i = 0; i < count; i++) {
-      arr[i * 3]     = (Math.random() - 0.5) * 22
-      arr[i * 3 + 1] = (Math.random() - 0.5) * 14
-      arr[i * 3 + 2] = (Math.random() - 0.5) * 10
+      arr[i * 3]     = (Math.random() - 0.5) * 25
+      arr[i * 3 + 1] = (Math.random() - 0.5) * 15
+      arr[i * 3 + 2] = (Math.random() - 0.5) * 12
     }
     return arr
   }, [])
@@ -54,10 +53,10 @@ function ParticleField() {
   const colors = useMemo(() => {
     const arr = new Float32Array(count * 3)
     const palette = [
-      new THREE.Color("#7c3aed"),
-      new THREE.Color("#06b6d4"),
-      new THREE.Color("#a855f7"),
-      new THREE.Color("#c4b5fd"),
+      new THREE.Color("#ffffff"),
+      new THREE.Color("#94a3b8"),
+      new THREE.Color("#d97706"),
+      new THREE.Color("#475569"),
     ]
     for (let i = 0; i < count; i++) {
       const c = palette[Math.floor(Math.random() * palette.length)]
@@ -70,8 +69,8 @@ function ParticleField() {
 
   useFrame((state) => {
     if (!pointsRef.current) return
-    pointsRef.current.rotation.y = state.clock.elapsedTime * 0.025
-    pointsRef.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.015) * 0.08
+    pointsRef.current.rotation.y = state.clock.elapsedTime * 0.015
+    pointsRef.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.01) * 0.05
   })
 
   return (
@@ -80,7 +79,7 @@ function ParticleField() {
         <bufferAttribute attach="attributes-position" args={[positions, 3]} />
         <bufferAttribute attach="attributes-color" args={[colors, 3]} />
       </bufferGeometry>
-      <pointsMaterial size={0.055} vertexColors transparent opacity={0.75} sizeAttenuation />
+      <pointsMaterial size={0.045} vertexColors transparent opacity={0.5} sizeAttenuation />
     </points>
   )
 }
@@ -90,22 +89,18 @@ function RingPortal() {
   const ring2Ref = useRef()
   useFrame((state) => {
     const t = state.clock.elapsedTime
-    if (ringRef.current)  ringRef.current.rotation.z  = t * 0.18
-    if (ring2Ref.current) ring2Ref.current.rotation.z = -t * 0.12
+    if (ringRef.current)  ringRef.current.rotation.z  = t * 0.1
+    if (ring2Ref.current) ring2Ref.current.rotation.z = -t * 0.08
   })
   return (
-    <group position={[0, 0, -3]}>
+    <group position={[0, 0, -4]}>
       <mesh ref={ringRef}>
-        <torusGeometry args={[3.8, 0.025, 12, 120]} />
-        <meshStandardMaterial color="#7c3aed" emissive="#7c3aed" emissiveIntensity={2.5} transparent opacity={0.5} />
+        <torusGeometry args={[4.2, 0.015, 12, 150]} />
+        <meshStandardMaterial color="#ffffff" emissive="#ffffff" emissiveIntensity={1} transparent opacity={0.15} />
       </mesh>
       <mesh ref={ring2Ref}>
-        <torusGeometry args={[4.6, 0.015, 12, 120]} />
-        <meshStandardMaterial color="#06b6d4" emissive="#06b6d4" emissiveIntensity={2} transparent opacity={0.35} />
-      </mesh>
-      <mesh>
-        <torusGeometry args={[3.0, 0.01, 8, 100]} />
-        <meshStandardMaterial color="#c4b5fd" emissive="#c4b5fd" emissiveIntensity={1.5} transparent opacity={0.25} />
+        <torusGeometry args={[5.0, 0.01, 12, 150]} />
+        <meshStandardMaterial color="#d97706" emissive="#d97706" emissiveIntensity={0.8} transparent opacity={0.1} />
       </mesh>
     </group>
   )
@@ -114,18 +109,17 @@ function RingPortal() {
 function PricingScene() {
   return (
     <>
-      <ambientLight intensity={0.1} />
-      <pointLight position={[0, 0, 2]} color="#7c3aed" intensity={3} distance={12} />
-      <pointLight position={[5, 3, 0]} color="#06b6d4" intensity={2} distance={10} />
-      <pointLight position={[-5, -3, 0]} color="#a855f7" intensity={1.5} distance={8} />
+      <ambientLight intensity={0.2} />
+      <pointLight position={[0, 0, 5]} color="#ffffff" intensity={2} distance={20} />
+      <pointLight position={[8, 5, 0]} color="#d97706" intensity={1.5} distance={15} />
+      <pointLight position={[-8, -5, 0]} color="#ffffff" intensity={1} distance={15} />
 
       <ParticleField />
       <RingPortal />
 
-      <FloatingOrb position={[-5.5, 2.5, -2]}  color="#7c3aed" speed={0.8} distort={0.55} scale={1.4} />
-      <FloatingOrb position={[ 5.5, -2.0, -1]} color="#06b6d4" speed={0.6} distort={0.45} scale={1.1} />
-      <FloatingOrb position={[ 0.5,  3.5, -4]} color="#a855f7" speed={1.0} distort={0.65} scale={0.8} />
-      <FloatingOrb position={[-3.0, -3.0, -3]} color="#c4b5fd" speed={0.7} distort={0.4}  scale={0.6} />
+      <FloatingOrb position={[-6, 3, -2]}   color="#ffffff" speed={0.5} distort={0.4} scale={1.5} />
+      <FloatingOrb position={[ 6, -3, -1]}  color="#d97706" speed={0.4} distort={0.3} scale={1.2} />
+      <FloatingOrb position={[ 0, 5, -5]}    color="#ffffff" speed={0.6} distort={0.5} scale={0.9} />
 
       <Environment preset="night" />
     </>
@@ -134,10 +128,10 @@ function PricingScene() {
 
 // ── Pricing data ──────────────────────────────────────────────────────────────
 const CLASS_META = {
-  Subcompact: { icon: "🚗", tagline: "Smart & efficient",   accent: "#06b6d4", badge: "cyan",   popular: false },
-  Compact:    { icon: "🚙", tagline: "Best value",          accent: "#3b82f6", badge: "blue",   popular: false },
-  Sedan:      { icon: "🏎️", tagline: "Most popular",        accent: "#a855f7", badge: "purple", popular: true  },
-  Luxury:     { icon: "👑", tagline: "Ultimate experience", accent: "#f59e0b", badge: "purple", popular: false },
+  Subcompact: { icon: "🔘", tagline: "Agile Precision",    accent: "#94a3b8", popular: false },
+  Compact:    { icon: "🔹", tagline: "Essential Value",    accent: "#64748b", popular: false },
+  Sedan:      { icon: "💠", tagline: "Preferred Standard", accent: "#cbd5e1", popular: true  },
+  Luxury:     { icon: "🔱", tagline: "Apex Selection",     accent: "#d97706", popular: false },
 }
 
 const DROP_OFF_RANGE = {
@@ -148,10 +142,10 @@ const DROP_OFF_RANGE = {
 }
 
 const DURATION_KEYS = [
-  { key: "perDay",    label: "Per Day",      unit: "day"    },
-  { key: "perWeek",   label: "Per Week",     unit: "7 days" },
-  { key: "per2Weeks", label: "Per 2 Weeks",  unit: "14 days"},
-  { key: "perMonth",  label: "Per Month",    unit: "30 days"},
+  { key: "perDay",    label: "DAILY",      unit: "DAY"    },
+  { key: "perWeek",   label: "WEEKLY",     unit: "7 DAYS" },
+  { key: "per2Weeks", label: "BI-WEEKLY",  unit: "14 DAYS"},
+  { key: "perMonth",  label: "MONTHLY",    unit: "30 DAYS"},
 ]
 
 function PricingCard({ pricing, index, activeDuration }) {
@@ -161,85 +155,58 @@ function PricingCard({ pricing, index, activeDuration }) {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 60, scale: 0.92 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      transition={{ delay: index * 0.1, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-      className="relative flex flex-col rounded-3xl overflow-hidden group cursor-default"
-      style={{
-        background: meta.popular
-          ? `linear-gradient(160deg, rgba(124,58,237,0.18), rgba(6,182,212,0.08))`
-          : `linear-gradient(160deg, rgba(124,58,237,0.07), rgba(2,2,8,0.6))`,
-        border: meta.popular
-          ? `1px solid rgba(124,58,237,0.5)`
-          : `1px solid rgba(124,58,237,0.15)`,
-        boxShadow: meta.popular
-          ? `0 0 40px rgba(124,58,237,0.25), 0 0 80px rgba(124,58,237,0.08)`
-          : "none",
-      }}
+      initial={{ opacity: 0, y: 40 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: index * 0.1, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+      className="relative flex flex-col rounded-3xl overflow-hidden group cursor-default bg-white/5 border border-white/10"
       whileHover={{
-        y: -8,
-        boxShadow: `0 0 50px ${meta.accent}40, 0 0 100px ${meta.accent}15`,
-        borderColor: `${meta.accent}60`,
-        transition: { duration: 0.25 },
+        y: -10,
+        borderColor: "rgba(255,255,255,0.3)",
+        boxShadow: "0 25px 50px -12px rgba(0,0,0,0.5)",
       }}
     >
-      {/* Top glow line */}
-      <div className="absolute top-0 left-0 right-0 h-px" style={{ background: `linear-gradient(90deg, transparent, ${meta.accent}cc, transparent)` }} />
-
-      {/* Popular badge */}
       {meta.popular && (
-        <div className="absolute -top-px left-1/2 -translate-x-1/2">
-          <div className="px-4 py-1 rounded-b-xl text-xs font-bold text-white" style={{ background: `linear-gradient(135deg, #7c3aed, #06b6d4)` }}>
-            ✦ Most Popular
-          </div>
-        </div>
+        <div className="absolute top-0 left-0 right-0 h-[2px] bg-white z-20" />
       )}
 
-      <div className="p-7 flex flex-col gap-5 flex-1">
-        {/* Header */}
-        <div className="flex items-start justify-between">
-          <div>
-            <div className="text-3xl mb-2">{meta.icon}</div>
-            <h3 className="text-xl font-black text-white">{pricing.carClass}</h3>
-            <p className="text-xs mt-0.5" style={{ color: `${meta.accent}cc` }}>{meta.tagline}</p>
+      <div className="p-8 flex flex-col gap-6 flex-1">
+        <div>
+          <div className="flex items-center justify-between mb-4">
+             <span className="text-2xl">{meta.icon}</span>
+             {meta.popular && (
+               <span className="text-[9px] font-black uppercase tracking-[0.25em] bg-white text-black px-2 py-1 rounded">Preferred</span>
+             )}
           </div>
-          <NeonBadge label={pricing.carClass} color={meta.badge} />
+          <h3 className="text-2xl font-black text-white uppercase tracking-tighter">{pricing.carClass}</h3>
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500 mt-1">{meta.tagline}</p>
         </div>
 
-        {/* Price hero */}
-        <div className="py-4 border-y" style={{ borderColor: `${meta.accent}20` }}>
-          <div className="flex items-end gap-1">
-            <span className="text-5xl font-black" style={{ background: `linear-gradient(135deg, #fff, ${meta.accent})`, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+        <div className="py-6 border-y border-white/5">
+          <div className="flex items-end gap-2">
+            <span className="text-5xl font-black text-white tracking-tighter">
               ${price.toFixed(2)}
             </span>
+            <span className="text-[10px] font-black text-slate-600 mb-2 uppercase tracking-widest">/ {activeDuration.unit}</span>
           </div>
-          <p className="text-xs mt-1" style={{ color: "rgba(196,181,253,0.5)" }}>per {activeDuration.unit}</p>
         </div>
 
-        {/* All rates */}
-        <div className="flex flex-col gap-2 flex-1">
+        <div className="flex flex-col gap-3 flex-1">
           {DURATION_KEYS.map(d => (
-            <div key={d.key} className={`flex justify-between items-center px-3 py-2 rounded-xl transition-all ${d.key === activeDuration.key ? "text-white" : "text-white/40"}`}
-              style={d.key === activeDuration.key ? { background: `${meta.accent}18`, border: `1px solid ${meta.accent}30` } : {}}
-            >
-              <span className="text-sm">{d.label}</span>
-              <span className="font-bold text-sm">${pricing[d.key].toFixed(2)}</span>
+            <div key={d.key} className={`flex justify-between items-center px-4 py-3 rounded-xl transition-all border ${d.key === activeDuration.key ? "bg-white/10 border-white/20 text-white" : "bg-transparent border-transparent text-slate-500"}`}>
+              <span className="text-[10px] font-black uppercase tracking-widest">{d.label}</span>
+              <span className="text-[11px] font-black uppercase tracking-widest">${pricing[d.key].toFixed(2)}</span>
             </div>
           ))}
         </div>
 
-        {/* Drop-off note */}
-        <div className="rounded-xl px-3 py-2.5" style={{ background: "rgba(245,158,11,0.07)", border: "1px solid rgba(245,158,11,0.15)" }}>
-          <p className="text-xs flex items-center gap-1.5" style={{ color: "rgba(251,191,36,0.7)" }}>
-            <span>📍</span> Drop-off: <span className="font-semibold">{DROP_OFF_RANGE[pricing.carClass]}</span>
-          </p>
-          <p className="text-[10px] mt-0.5" style={{ color: "rgba(255,255,255,0.2)" }}>Same-location return = no charge</p>
+        <div className="bg-black/40 rounded-2xl p-4 border border-white/5">
+          <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Logistical Range</p>
+          <p className="text-white font-black text-xs uppercase tracking-widest">{DROP_OFF_RANGE[pricing.carClass]}</p>
         </div>
 
-        {/* CTA */}
-        <NeonButton onClick={() => navigate("/")} className="w-full justify-center text-center">
-          Book {pricing.carClass} →
-        </NeonButton>
+        <SleekButton onClick={() => navigate("/")} variant={meta.popular ? "platinum" : "outline"} className="w-full py-4 text-[10px] font-black uppercase tracking-[0.3em]">
+          Initiate Booking
+        </SleekButton>
       </div>
     </motion.div>
   )
@@ -251,40 +218,32 @@ function ComparisonTable({ pricingData }) {
       initial={{ opacity: 0, y: 40 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      transition={{ duration: 0.6 }}
-      className="mt-20 rounded-3xl overflow-hidden"
-      style={{ border: "1px solid rgba(124,58,237,0.2)", background: "linear-gradient(135deg, rgba(124,58,237,0.06), rgba(2,2,8,0.8))" }}
+      className="mt-32 rounded-3xl overflow-hidden bg-white/5 border border-white/10"
     >
-      <div className="p-6 border-b" style={{ borderColor: "rgba(124,58,237,0.15)" }}>
-        <h3 className="text-xl font-bold text-white">Full Rate Comparison</h3>
-        <p className="text-sm mt-1" style={{ color: "rgba(196,181,253,0.5)" }}>All classes side by side</p>
+      <div className="p-8 border-b border-white/5 bg-black/20">
+        <h3 className="text-xl font-black text-white uppercase tracking-tighter">Full Manifest Comparison</h3>
+        <p className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.3em] mt-2">Side-by-side metric audit</p>
       </div>
       <div className="overflow-x-auto">
-        <table className="w-full text-sm">
+        <table className="w-full">
           <thead>
-            <tr style={{ borderBottom: "1px solid rgba(124,58,237,0.15)" }}>
-              <th className="text-left px-6 py-4 font-semibold" style={{ color: "rgba(196,181,253,0.6)" }}>Duration</th>
-              {pricingData.map(p => {
-                const meta = CLASS_META[p.carClass]
-                return (
-                  <th key={p.carClass} className="px-6 py-4 font-semibold text-center" style={{ color: meta.accent }}>
-                    {CLASS_META[p.carClass].icon} {p.carClass}
-                  </th>
-                )
-              })}
+            <tr className="border-b border-white/5">
+              <th className="text-left px-8 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-slate-600">Category</th>
+              {pricingData.map(p => (
+                <th key={p.carClass} className="px-8 py-6 text-[11px] font-black uppercase tracking-[0.3em] text-white text-center">
+                  {p.carClass}
+                </th>
+              ))}
             </tr>
           </thead>
           <tbody>
             {DURATION_KEYS.map((d, i) => (
-              <tr key={d.key} style={{ borderBottom: i < DURATION_KEYS.length - 1 ? "1px solid rgba(124,58,237,0.08)" : "none" }}
-                className="hover:bg-white/[0.02] transition-colors"
-              >
-                <td className="px-6 py-4" style={{ color: "rgba(196,181,253,0.7)" }}>
-                  <span className="font-medium">{d.label}</span>
-                  <span className="text-xs ml-2" style={{ color: "rgba(255,255,255,0.25)" }}>({d.unit})</span>
+              <tr key={d.key} className="border-b border-white/5 last:border-0 hover:bg-white/[0.02] transition-colors">
+                <td className="px-8 py-6">
+                  <span className="text-[11px] font-black uppercase tracking-[0.2em] text-white">{d.label}</span>
                 </td>
                 {pricingData.map(p => (
-                  <td key={p.carClass} className="px-6 py-4 text-center font-bold text-white">
+                  <td key={p.carClass} className="px-8 py-6 text-center text-slate-400 font-bold text-sm">
                     ${p[d.key].toFixed(2)}
                   </td>
                 ))}
@@ -294,50 +253,6 @@ function ComparisonTable({ pricingData }) {
         </table>
       </div>
     </motion.div>
-  )
-}
-
-function PerksSection() {
-  const perks = [
-    { icon: "⛽", title: "Full Tank Guarantee",    desc: "Every vehicle delivered with a full tank. Return at any level." },
-    { icon: "🔄", title: "Free Class Upgrades",    desc: "Get bumped to a higher class at no extra cost when available." },
-    { icon: "📍", title: "Drop-Off Anywhere",      desc: "Return to any of our 20+ locations across Canada." },
-    { icon: "🛡️", title: "Transparent Pricing",    desc: "No hidden fees. What you see is exactly what you pay." },
-    { icon: "👔", title: "Employee Discounts",     desc: "Staff enjoy 50% off short rentals, 10% off monthly." },
-    { icon: "🎁", title: "Weekly Promotions",      desc: "Active deals on select classes — check before you book." },
-  ]
-  return (
-    <div className="mt-20">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        className="text-center mb-10"
-      >
-        <h3 className="text-3xl font-bold text-white mb-2">What's <span className="phantom-text">Included</span></h3>
-        <p className="text-sm" style={{ color: "rgba(196,181,253,0.5)" }}>Every rental comes with these guarantees</p>
-      </motion.div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {perks.map((p, i) => (
-          <motion.div
-            key={p.title}
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: i * 0.07, duration: 0.5 }}
-            whileHover={{ y: -4, borderColor: "rgba(124,58,237,0.4)" }}
-            className="flex gap-4 p-5 rounded-2xl transition-all"
-            style={{ background: "rgba(124,58,237,0.05)", border: "1px solid rgba(124,58,237,0.12)" }}
-          >
-            <span className="text-2xl shrink-0">{p.icon}</span>
-            <div>
-              <h4 className="text-white font-semibold text-sm mb-1">{p.title}</h4>
-              <p className="text-xs leading-relaxed" style={{ color: "rgba(196,181,253,0.5)" }}>{p.desc}</p>
-            </div>
-          </motion.div>
-        ))}
-      </div>
-    </div>
   )
 }
 
@@ -355,125 +270,80 @@ export default function PricingPage() {
   }, [])
 
   return (
-    <div className="min-h-screen relative" style={{ background: "transparent" }}>
-
-      {/* Three.js background */}
+    <div className="min-h-screen bg-[#050505]">
       <div className="fixed inset-0 z-0 pointer-events-none">
-        <Canvas
-          camera={{ position: [0, 0, 8], fov: 55 }}
-          gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
-          style={{ background: "transparent" }}
-        >
+        <Canvas camera={{ position: [0, 0, 8], fov: 55 }}>
           <Suspense fallback={null}>
             <PricingScene />
           </Suspense>
         </Canvas>
       </div>
 
-      {/* Content */}
-      <div className="relative z-10 pt-28 pb-20 px-6">
-        <div className="max-w-6xl mx-auto">
-
-          {/* Hero header */}
+      <div className="relative z-10 pt-32 pb-24 px-6">
+        <div className="max-w-7xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-            className="text-center mb-14"
+            className="text-center mb-20"
           >
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-5 text-xs font-semibold uppercase tracking-widest"
-              style={{ background: "rgba(124,58,237,0.12)", border: "1px solid rgba(124,58,237,0.3)", color: "#a855f7" }}
-            >
-              <span className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse" style={{ boxShadow: "0 0 8px rgba(168,85,247,0.8)" }} />
-              Transparent Pricing
+            <div className="inline-block px-4 py-1.5 rounded bg-white/5 border border-white/10 text-[9px] font-black uppercase tracking-[0.4em] text-white/50 mb-8">
+              Financial Transparency
             </div>
-            <h1 className="text-5xl md:text-7xl font-black text-white mb-4 leading-tight">
-              Simple,{" "}
-              <span className="phantom-text">Honest</span>
-              <br />Pricing
+            <h1 className="text-6xl md:text-8xl font-black text-white mb-6 tracking-tighter uppercase">
+              Value <span className="text-slate-700">Audit</span>
             </h1>
-            <p className="text-lg max-w-xl mx-auto" style={{ color: "rgba(196,181,253,0.55)" }}>
-              No surprises. No hidden fees. Just premium vehicles at rates that make sense.
+            <p className="text-xl max-w-2xl mx-auto text-slate-500 font-medium">
+              Elite performance at calculated rates. No compromises, no hidden variables.
             </p>
           </motion.div>
 
-          {/* Duration toggle */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.5 }}
-            className="flex justify-center mb-10"
-          >
-            <div className="flex gap-1 p-1 rounded-2xl" style={{ background: "rgba(124,58,237,0.08)", border: "1px solid rgba(124,58,237,0.2)" }}>
+          <div className="flex justify-center mb-16">
+            <div className="flex p-2 rounded-2xl bg-white/5 border border-white/10 gap-2">
               {DURATION_KEYS.map(d => (
                 <button
                   key={d.key}
                   onClick={() => setActiveDuration(d)}
-                  className="px-5 py-2 rounded-xl text-sm font-semibold transition-all cursor-pointer border-none"
-                  style={activeDuration.key === d.key
-                    ? { background: "linear-gradient(135deg, #7c3aed, #06b6d4)", color: "#fff", boxShadow: "0 0 20px rgba(124,58,237,0.4)" }
-                    : { background: "transparent", color: "rgba(196,181,253,0.6)" }
-                  }
+                  className={`px-8 py-3 rounded-xl text-[10px] font-black uppercase tracking-[0.25em] transition-all cursor-pointer border-none ${activeDuration.key === d.key ? 'bg-white text-black shadow-xl' : 'bg-transparent text-slate-500 hover:text-white'}`}
                 >
                   {d.label}
                 </button>
               ))}
             </div>
-          </motion.div>
+          </div>
 
-          {/* Cards */}
           {loading ? (
-            <div className="flex items-center justify-center py-32">
-              <div className="w-8 h-8 rounded-full border-2 border-purple-500 border-t-transparent animate-spin" />
+            <div className="flex flex-col items-center justify-center py-32 gap-6">
+              <div className="w-16 h-px bg-white/20 animate-pulse" />
+              <p className="text-[10px] font-black uppercase tracking-[0.4em] text-white/20 animate-pulse">Retrieving Audit Data</p>
             </div>
           ) : (
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activeDuration.key}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.3 }}
-                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5"
-              >
-                {pricingData.map((p, i) => (
-                  <PricingCard key={p.carClass} pricing={p} index={i} activeDuration={activeDuration} />
-                ))}
-              </motion.div>
-            </AnimatePresence>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {pricingData.map((p, i) => (
+                <PricingCard key={p.carClass} pricing={p} index={i} activeDuration={activeDuration} />
+              ))}
+            </div>
           )}
 
-          {/* Comparison table */}
           {!loading && <ComparisonTable pricingData={pricingData} />}
 
-          {/* Perks */}
-          <PerksSection />
-
-          {/* CTA banner */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="mt-20 rounded-3xl p-10 text-center relative overflow-hidden"
-            style={{ background: "linear-gradient(135deg, rgba(124,58,237,0.2), rgba(6,182,212,0.1))", border: "1px solid rgba(124,58,237,0.3)" }}
+            className="mt-32 rounded-3xl p-16 text-center bg-white/5 border border-white/10 relative overflow-hidden"
           >
-            <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 50% 0%, rgba(124,58,237,0.2), transparent 60%)" }} />
             <div className="relative z-10">
-              <h3 className="text-3xl font-black text-white mb-3">Ready to Hit the Road?</h3>
-              <p className="mb-6" style={{ color: "rgba(196,181,253,0.6)" }}>Book your vehicle in under 2 minutes.</p>
-              <NeonButton onClick={() => { window.scrollTo({ top: 0 }); window.location.href = "/" }} className="px-10 py-3 text-base">
-                Book Now →
-              </NeonButton>
+              <h3 className="text-4xl font-black text-white mb-6 uppercase tracking-tighter">Ready for Departure?</h3>
+              <p className="text-slate-500 font-medium text-lg mb-12">Initialize your experience in under 120 seconds.</p>
+              <SleekButton onClick={() => { window.scrollTo({ top: 0 }); window.location.href = "/" }} variant="amber" className="px-16 py-5 text-base uppercase tracking-widest">
+                Start Mission
+              </SleekButton>
             </div>
           </motion.div>
-
         </div>
       </div>
 
-      <div className="relative z-10">
-        <Footer />
-      </div>
+      <Footer />
     </div>
   )
 }

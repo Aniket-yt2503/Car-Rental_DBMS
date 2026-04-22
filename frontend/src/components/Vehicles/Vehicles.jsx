@@ -10,48 +10,12 @@ gsap.registerPlugin(ScrollTrigger)
 
 const CAR_CLASSES = ['All', 'Subcompact', 'Compact', 'Sedan', 'Luxury']
 
-function FilterButton({ label, active, onClick }) {
-  return (
-    <motion.button
-      onClick={onClick}
-      whileHover={{ scale: 1.04 }}
-      whileTap={{ scale: 0.97 }}
-      className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all duration-200 cursor-pointer ${
-        active
-          ? 'bg-purple-600/80 border-purple-500 text-white shadow-[0_0_14px_rgba(168,85,247,0.5)]'
-          : 'bg-white/5 border-white/10 text-white/60 hover:bg-white/10 hover:text-white'
-      }`}
-    >
-      {label}
-    </motion.button>
-  )
-}
-
-// Horizontal scroll marquee
-const ClassMarquee = memo(function ClassMarquee() {
-  const items = ['SUBCOMPACT', 'COMPACT', 'SEDAN', 'LUXURY', 'SUBCOMPACT', 'COMPACT', 'SEDAN', 'LUXURY']
-  return (
-    <div className="overflow-hidden py-3 mb-8 border-y border-white/5">
-      <motion.div
-        animate={{ x: ['0%', '-50%'] }}
-        transition={{ duration: 24, repeat: Infinity, ease: 'linear' }}
-        className="flex gap-8 whitespace-nowrap"
-        style={{ willChange: 'transform' }}
-      >
-        {items.map((item, i) => (
-          <span key={i} className="text-white/8 text-4xl font-black tracking-widest select-none">{item}</span>
-        ))}
-      </motion.div>
-    </div>
-  )
-})
-
-// Section header — simple, no scroll-driven parallax
+// Section header
 function SectionHeader({ filtered }) {
   return (
-    <div className="text-center mb-6">
-      <p className="text-white/50 text-base">
-        <span className="text-white font-semibold">{filtered}</span> vehicles available — hover to tilt, click 3D to explore.
+    <div className="text-center mb-10">
+      <p className="text-slate-500 text-[10px] font-black uppercase tracking-[0.3em]">
+        <span className="text-white">{filtered}</span> Units Ready For Deployment
       </p>
     </div>
   )
@@ -75,7 +39,6 @@ export default function Vehicles() {
     })
   }, [])
 
-  // GSAP stagger entrance — only on first load
   const hasAnimated = useRef(false)
   useEffect(() => {
     if (!gridRef.current || loading || hasAnimated.current) return
@@ -83,29 +46,14 @@ export default function Vehicles() {
     if (!cards.length) return
     hasAnimated.current = true
     gsap.fromTo(cards,
-      { opacity: 0, y: 40 },
+      { opacity: 0, y: 30 },
       {
         opacity: 1, y: 0,
-        duration: 0.55, stagger: 0.05, ease: 'power2.out',
+        duration: 0.6, stagger: 0.08, ease: 'power2.out',
         scrollTrigger: { trigger: gridRef.current, start: 'top 85%', once: true },
       }
     )
   }, [loading])
-
-  // Horizontal scroll line animation
-  useEffect(() => {
-    if (!sectionRef.current) return
-    const ctx = gsap.context(() => {
-      gsap.fromTo('.vehicles-line',
-        { scaleX: 0, transformOrigin: 'left' },
-        {
-          scaleX: 1, duration: 1.2, ease: 'power2.out',
-          scrollTrigger: { trigger: sectionRef.current, start: 'top 70%', once: true },
-        }
-      )
-    }, sectionRef)
-    return () => ctx.revert()
-  }, [])
 
   const locationOptions = ['All', ...locations.map(l => l.name)]
 
@@ -116,71 +64,73 @@ export default function Vehicles() {
     return classMatch && locationMatch
   })
 
+  const selectClass = "w-full sm:w-56 px-5 py-3 rounded-xl text-xs font-bold uppercase tracking-widest border outline-none bg-white/5 border-white/10 text-white/70 focus:border-white/40 focus:text-white cursor-pointer appearance-none transition-all duration-300"
+
   return (
     <section ref={sectionRef} id="vehicles" className="pt-4 pb-20 px-6 relative overflow-hidden" style={{ background: 'transparent' }}>
-      {/* Background grid lines */}
-      <div className="absolute inset-0 pointer-events-none opacity-[0.03]" style={{
-        backgroundImage: 'linear-gradient(rgba(168,85,247,1) 1px, transparent 1px), linear-gradient(90deg, rgba(168,85,247,1) 1px, transparent 1px)',
-        backgroundSize: '60px 60px',
-      }} />
-
-      {/* Ambient glow */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] pointer-events-none" style={{
-        background: 'radial-gradient(ellipse, rgba(124,58,237,0.08) 0%, transparent 70%)',
+      <div className="absolute inset-0 pointer-events-none opacity-[0.02]" style={{
+        backgroundImage: 'linear-gradient(white 1px, transparent 1px), linear-gradient(90deg, white 1px, transparent 1px)',
+        backgroundSize: '80px 80px',
       }} />
 
       <div className="max-w-7xl mx-auto">
         {/* Filters */}
-        <div className="flex flex-col sm:flex-row justify-center gap-4 mb-8">
-          <div className="relative">
+        <div className="flex flex-col sm:flex-row justify-center gap-6 mb-12">
+          <div className="relative group">
             <select
               value={activeClassFilter}
               onChange={(e) => setActiveClassFilter(e.target.value)}
-              className="w-full sm:w-48 px-4 py-2.5 rounded-xl text-sm font-medium border outline-none bg-[rgba(124,58,237,0.1)] border-[rgba(124,58,237,0.2)] text-white focus:border-[rgba(124,58,237,0.6)] cursor-pointer appearance-none transition-colors"
+              className={selectClass}
             >
-              <option value="All" className="bg-gray-900">All Categories</option>
+              <option value="All" className="bg-neutral-900">All Categories</option>
               {CAR_CLASSES.filter(c => c !== 'All').map(cls => (
-                <option key={cls} value={cls} className="bg-gray-900">{cls}</option>
+                <option key={cls} value={cls} className="bg-neutral-900">{cls}</option>
               ))}
             </select>
-            <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none">
-              <svg className="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+            <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none text-white/30 group-hover:text-white/60 transition-colors">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7"></path></svg>
             </div>
           </div>
 
-          <div className="relative">
+          <div className="relative group">
             <select
               value={activeLocationFilter}
               onChange={(e) => setActiveLocationFilter(e.target.value)}
-              className="w-full sm:w-48 px-4 py-2.5 rounded-xl text-sm font-medium border outline-none bg-[rgba(124,58,237,0.1)] border-[rgba(124,58,237,0.2)] text-white focus:border-[rgba(124,58,237,0.6)] cursor-pointer appearance-none transition-colors"
+              className={selectClass}
             >
-              <option value="All" className="bg-gray-900">All Locations</option>
+              <option value="All" className="bg-neutral-900">All Locations</option>
               {locationOptions.filter(l => l !== 'All').map(loc => (
-                <option key={loc} value={loc} className="bg-gray-900">{loc}</option>
+                <option key={loc} value={loc} className="bg-neutral-900">{loc}</option>
               ))}
             </select>
-            <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none">
-              <svg className="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+            <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none text-white/30 group-hover:text-white/60 transition-colors">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7"></path></svg>
             </div>
           </div>
         </div>
 
-        {loading && <p className="text-center text-white/40 py-20">Loading vehicles…</p>}
-        {error && <p className="text-center text-red-400 py-20">Failed to load vehicles: {error}</p>}
+        {loading && (
+          <div className="flex flex-col items-center justify-center py-32 gap-4">
+            <div className="w-12 h-px bg-white/20 animate-pulse" />
+            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-white/20 animate-pulse">Initializing Fleet</p>
+          </div>
+        )}
+        
+        {error && <p className="text-center text-red-400 font-bold py-32 uppercase tracking-widest text-xs">Access Denied: {error}</p>}
 
         {!loading && !error && (
           <div ref={gridRef}>
             <SectionHeader filtered={filtered.length} />
             <AnimatePresence mode="popLayout">
-              <motion.div layout className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              <motion.div layout className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
                 {filtered.map(car => (
                   <motion.div
                     key={car.id}
                     layout
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.92 }}
-                    transition={{ duration: 0.22 }}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.3 }}
                     className="car-card-item"
                   >
                     <CarCard car={car} />
@@ -190,7 +140,10 @@ export default function Vehicles() {
             </AnimatePresence>
 
             {filtered.length === 0 && (
-              <p className="text-center text-white/40 py-20">No vehicles match the selected filters.</p>
+              <div className="flex flex-col items-center justify-center py-32 gap-4">
+                <div className="w-12 h-px bg-white/10" />
+                <p className="text-[10px] font-black uppercase tracking-[0.3em] text-white/20">No matching assets found</p>
+              </div>
             )}
           </div>
         )}

@@ -44,6 +44,7 @@ app.use('/api/employees', require('./routes/employees'));
 app.use('/api/rentals', require('./routes/rentals'));
 app.use('/api/locations', require('./routes/locations'));
 app.use('/api/promotions', require('./routes/promotions'));
+app.use('/api/admin', require('./routes/admin'));
 // TEMPORARY: remove after running /api/migrate once
 app.use('/api/migrate', require('./routes/migrate'));
 

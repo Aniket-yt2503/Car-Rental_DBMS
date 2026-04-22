@@ -10,6 +10,18 @@ export function getLocalTodayString() {
 }
 
 /**
+ * Returns a date exactly 1 year from today in local YYYY-MM-DD format.
+ */
+export function getLocalMaxDateString() {
+  const date = new Date();
+  date.setFullYear(date.getFullYear() + 1);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+/**
  * Validates the booking widget form data.
  * @param {Object} formData
  * @param {string} formData.pickupLocation
@@ -32,11 +44,14 @@ export function validateBookingForm(formData) {
   }
 
   const todayStr = getLocalTodayString();
+  const maxDateStr = getLocalMaxDateString();
 
   if (!pickupDate) {
     errors.pickupDate = 'Please select a pickup date';
   } else if (pickupDate < todayStr) {
     errors.pickupDate = 'Pickup date cannot be in the past';
+  } else if (pickupDate > maxDateStr) {
+    errors.pickupDate = 'Pickup date cannot exceed 1 year in advance';
   }
 
   if (!returnDate) {

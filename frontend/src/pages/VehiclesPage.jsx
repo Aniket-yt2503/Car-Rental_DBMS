@@ -23,24 +23,23 @@ function VehiclesHero() {
   }, [])
 
   return (
-    <div className="relative overflow-hidden flex items-center justify-center" style={{ paddingTop: '5rem', paddingBottom: '1.5rem', background: 'transparent' }}>
+    <div className="relative overflow-hidden flex items-center justify-center" style={{ paddingTop: '5.5rem', paddingBottom: '1rem', background: 'transparent' }}>
       <div ref={bgRef} className="absolute inset-0 pointer-events-none">
-        <div className="absolute rounded-full opacity-20" style={{ width: '50vw', height: '50vw', top: '-20%', left: '-10%', filter: 'blur(60px)', background: 'radial-gradient(circle, rgba(168,85,247,0.5) 0%, transparent 70%)', willChange: 'transform' }} />
-        <div className="absolute rounded-full opacity-15" style={{ width: '40vw', height: '40vw', bottom: '-20%', right: '-5%', filter: 'blur(60px)', background: 'radial-gradient(circle, rgba(59,130,246,0.5) 0%, transparent 70%)', willChange: 'transform' }} />
+        <div className="absolute rounded-full opacity-10" style={{ width: '50vw', height: '50vw', top: '-20%', left: '-10%', filter: 'blur(100px)', background: 'radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%)', willChange: 'transform' }} />
+        <div className="absolute rounded-full opacity-5" style={{ width: '40vw', height: '40vw', bottom: '-20%', right: '-5%', filter: 'blur(100px)', background: 'radial-gradient(circle, rgba(217,119,6,0.3) 0%, transparent 70%)', willChange: 'transform' }} />
       </div>
       <div className="relative z-10 text-center px-6">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          className="flex flex-wrap items-center justify-center gap-3"
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          className="flex flex-col items-center justify-center gap-3"
         >
-          <h1 className="text-3xl md:text-4xl font-black text-white">
-            Our <span className="bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">Fleet</span>
+          <h1 className="text-4xl md:text-5xl font-black text-white uppercase tracking-tighter">
+            THE <span className="bg-gradient-to-r from-slate-100 to-slate-400 bg-clip-text text-transparent">ELITE FLEET</span>
           </h1>
-          <span className="text-white/20 hidden md:inline">·</span>
-          <p className="text-white/50 text-sm md:text-base">
-            Browse, explore in <span className="text-purple-400 font-medium">3D</span>, and book your perfect vehicle.
+          <p className="text-slate-500 text-xs md:text-sm font-bold uppercase tracking-[0.25em]">
+            Precision Engineering <span className="text-white/20 px-2">|</span> Pure Luxury
           </p>
         </motion.div>
       </div>
@@ -50,12 +49,12 @@ function VehiclesHero() {
 
 function Divider({ label }) {
   return (
-    <div className="relative py-6 flex items-center justify-center overflow-hidden">
+    <div className="relative py-12 flex items-center justify-center overflow-hidden">
       <div className="absolute inset-0 flex items-center">
-        <div className="w-full border-t border-white/5" />
+        <div className="w-full h-px bg-gradient-to-r from-transparent via-white/5 to-transparent" />
       </div>
-      <div className="relative px-5 py-1.5 rounded-full bg-gray-950 border border-white/10">
-        <span className="text-white/40 text-xs uppercase tracking-widest">{label}</span>
+      <div className="relative px-8 py-2 rounded-full bg-black border border-white/10">
+        <span className="text-slate-500 text-[10px] font-black uppercase tracking-[0.3em]">{label}</span>
       </div>
     </div>
   )
@@ -64,10 +63,10 @@ function Divider({ label }) {
 export default function VehiclesPage() {
   useLenis()
   return (
-    <div className="min-h-screen" style={{ background: 'transparent' }}>
+    <div className="min-h-screen bg-[#050505]" style={{ background: 'transparent' }}>
       <VehiclesHero />
       <Vehicles />
-      <Divider label="This Week's Deal" />
+      <Divider label="Strategic Offers" />
       <Promotions />
       <Footer />
     </div>
