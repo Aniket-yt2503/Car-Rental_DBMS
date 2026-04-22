@@ -1,0 +1,26 @@
+{
+  "app\\explore\\page.tsx -> @/components/FleetExplorer": {
+    "id": "app\\explore\\page.tsx -> @/components/FleetExplorer",
+    "files": [
+      "static/chunks/_app-pages-browser_src_components_FleetExplorer_tsx.js"
+    ]
+  },
+  "app\\explore\\page.tsx -> @/components/WebGLBackground": {
+    "id": "app\\explore\\page.tsx -> @/components/WebGLBackground",
+    "files": [
+      "static/chunks/_app-pages-browser_src_components_WebGLBackground_tsx.js"
+    ]
+  },
+  "app\\page.tsx -> @/components/ParticleField": {
+    "id": "app\\page.tsx -> @/components/ParticleField",
+    "files": [
+      "static/chunks/_app-pages-browser_src_components_ParticleField_tsx.js"
+    ]
+  },
+  "app\\page.tsx -> @/components/WebGLBackground": {
+    "id": "app\\page.tsx -> @/components/WebGLBackground",
+    "files": [
+      "static/chunks/_app-pages-browser_src_components_WebGLBackground_tsx.js"
+    ]
+  }
+}

@@ -1,8 +1,16 @@
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
+import staticCars from '../data/cars.js';
+
 // ── Cars ──────────────────────────────────────────────────────────────────────
 // Transforms backend snake_case to the camelCase shape used by dbms2 components
 function transformCar(c) {
+  // Find matching static car by make and model, or just by class to get an image
+  let staticCar = staticCars.find(sc => sc.make === c.make && sc.model === c.model);
+  if (!staticCar) {
+    staticCar = staticCars.find(sc => sc.carClass.toLowerCase() === c.class_name?.toLowerCase()) || {};
+  }
+
   return {
     id:           c.car_id,
     car_id:       c.car_id,
@@ -19,7 +27,11 @@ function transformCar(c) {
     location_id:  c.location_id,
     pricePerDay:  Number(c.price_per_day || 0),
     price_per_day:Number(c.price_per_day || 0),
-    imageUrl:     c.image_url || null,
+    imageUrl:     staticCar.imageUrl || "https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=800&q=80",
+    features:     staticCar.features || ["Bluetooth", "Backup Camera"],
+    seats:        staticCar.seats || 5,
+    transmission: staticCar.transmission || "Automatic",
+    fuelType:     staticCar.fuelType || "Gasoline"
   };
 }
 

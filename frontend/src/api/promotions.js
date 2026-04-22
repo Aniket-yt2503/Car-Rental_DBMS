@@ -10,16 +10,17 @@ export async function getPromotions() {
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const raw = await res.json();
     // Normalize to what BookingSystem expects
-    const data = raw.map(p => ({
+    const data = raw.map((p, idx) => ({
       id:              p.promo_id,
       promo_id:        p.promo_id,
-      code:            p.promo_code,
-      promo_code:      p.promo_code,
+      code:            `PROMO${p.promo_id}`,
+      promo_code:      `PROMO${p.promo_id}`,
       carClass:        p.class_name ? p.class_name.charAt(0).toUpperCase() + p.class_name.slice(1) : null,
       class_name:      p.class_name,
       discountPercent: Number(p.discount_pct || 0),
       discount_pct:    Number(p.discount_pct || 0),
-      active:          !!p.active,
+      label:           `Weekly Deal on ${p.class_name ? p.class_name.charAt(0).toUpperCase() + p.class_name.slice(1) : 'all'} cars`,
+      active:          idx === 0, // Make the first one active by default so it shows up
     }));
     return { data, error: null };
   } catch (error) {
