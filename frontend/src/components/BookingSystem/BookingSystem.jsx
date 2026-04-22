@@ -154,6 +154,8 @@ function ConfirmedOverlay({ onClose, car }) {
   )
 }
 
+import BookingWidget from '../BookingWidget/index.js'
+
 // ─── Label/value row ──────────────────────────────────────────────────────────
 function Row({ label, value, accent }) {
   return (
@@ -166,10 +168,10 @@ function Row({ label, value, accent }) {
 
 export default function BookingSystem() {
   const { state, dispatch } = useAppContext()
-  const formData = state.bookingFormData
+  const formData = state.bookingFormData || {}
   const mode = state.mode
 
-  const [step, setStep] = useState('select')
+  const [step, setStep] = useState(!formData.pickupDate ? 'form' : 'select')
   const [chosenCar, setChosenCar] = useState(null)
   const [pricing, setPricing] = useState([])
   const [promotions, setPromotions] = useState([])
@@ -195,6 +197,13 @@ export default function BookingSystem() {
     }
   }, [step, state.lenis])
 
+  // Move to 'select' step automatically once form is completed
+  useEffect(() => {
+    if (step === 'form' && formData.pickupDate) {
+      setStep('select')
+    }
+  }, [formData, step])
+
   function handleCarSelected(car) {
     setChosenCar(car)
     setStep('details')
@@ -218,7 +227,30 @@ export default function BookingSystem() {
     } else setOdometerError(null)
   }, [startOdometer, endOdometer])
 
-  if (!formData) return null
+  if (step === 'form') {
+    return (
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.25 }}
+        className="fixed inset-0 z-[100] flex items-center justify-center p-4 backdrop-blur-md"
+        style={{ background: 'rgba(2,2,8,0.97)' }}
+      >
+        <div className="relative w-full max-w-3xl">
+          <div className="flex justify-between items-center mb-4 px-2">
+            <h1 className="text-xl font-black text-white tracking-wide" style={{ textShadow: '0 0 20px rgba(124,58,237,0.5)' }}>Trip Details</h1>
+            <button
+              onClick={() => dispatch({ type: 'CLOSE_BOOKING' })}
+              className="w-8 h-8 flex items-center justify-center rounded-full text-white/40 hover:text-white transition-colors cursor-pointer text-sm"
+              style={{ background: 'rgba(124,58,237,0.1)', border: '1px solid rgba(124,58,237,0.25)' }}
+            >✕</button>
+          </div>
+          <BookingWidget />
+        </div>
+      </motion.div>
+    )
+  }
 
   if (step === 'select') {
     return (
@@ -252,6 +284,8 @@ export default function BookingSystem() {
     setLoading(false)
     if (result.error) {
       console.error('[Booking]', result.error)
+      setError(result.error)
+      return
     }
     playMonzaSound()
     setConfirmed(true)
