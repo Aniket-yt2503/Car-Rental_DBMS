@@ -111,85 +111,97 @@ export default function QueriesPage() {
         })}
       </div>
 
-      {/* Dedicated Results Panel */}
+      {/* Dedicated Results Modal */}
       <AnimatePresence>
         {activeQueryId && (
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            className="flex-1 glass-phantom rounded-3xl overflow-hidden flex flex-col border border-purple-500/30 shadow-[0_0_40px_rgba(124,58,237,0.15)]"
-            style={{ minHeight: '350px' }}
-          >
-            {/* Panel Header */}
-            <div className="p-5 border-b flex justify-between items-center" style={{ borderColor: 'rgba(124,58,237,0.2)', background: 'rgba(2,2,8,0.4)' }}>
-              <div>
-                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-cyan-400 mb-1 block">Query Results</span>
-                <h2 className="text-xl font-bold text-white">Q{activeQueryId}: {QUERIES.find(q => q.id === activeQueryId)?.name}</h2>
-              </div>
-              <button 
-                onClick={() => setActiveQueryId(null)}
-                className="w-8 h-8 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 text-white/50 transition-colors"
-              >✕</button>
-            </div>
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setActiveQueryId(null)}
+              className="absolute inset-0 bg-black/70 backdrop-blur-md"
+            />
 
-            {/* Panel Body */}
-            <div className="p-6 flex-1 overflow-auto bg-[rgba(2,2,8,0.7)]">
-              {loading[activeQueryId] ? (
-                <div className="h-full flex flex-col items-center justify-center text-white/40 gap-3">
-                  <div className="w-8 h-8 border-2 border-purple-500 border-t-transparent rounded-full animate-spin" />
-                  <p className="text-sm font-mono uppercase tracking-widest">Executing SQL...</p>
+            {/* Modal */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="relative w-full max-w-5xl max-h-[85vh] flex-1 glass-phantom rounded-3xl overflow-hidden flex flex-col border border-purple-500/30 shadow-[0_0_60px_rgba(124,58,237,0.2)]"
+              style={{ minHeight: '350px' }}
+            >
+              {/* Panel Header */}
+              <div className="p-5 border-b flex justify-between items-center" style={{ borderColor: 'rgba(124,58,237,0.2)', background: 'rgba(2,2,8,0.6)' }}>
+                <div>
+                  <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-cyan-400 mb-1 block">Query Results</span>
+                  <h2 className="text-xl font-bold text-white">Q{activeQueryId}: {QUERIES.find(q => q.id === activeQueryId)?.name}</h2>
                 </div>
-              ) : !activeRes ? (
-                <div className="h-full flex items-center justify-center text-white/30 text-sm">No data returned</div>
-              ) : activeRes.error ? (
-                <div className="rounded-xl p-4 text-red-300 text-sm bg-red-500/10 border border-red-500/30">
-                  <strong className="block mb-1 text-red-400">SQL Error:</strong>
-                  {activeRes.error}
-                </div>
-              ) : isBoolean ? (
-                <div className="h-full flex items-center justify-center">
-                  <div
-                    className="inline-flex items-center gap-3 px-8 py-4 rounded-2xl text-2xl font-black shadow-xl"
-                    style={{
-                      background:   activeRes.answer === 'YES' ? 'rgba(6,182,212,0.1)' : 'rgba(239,68,68,0.1)',
-                      border:       `2px solid ${activeRes.answer === 'YES' ? 'rgba(6,182,212,0.4)' : 'rgba(239,68,68,0.4)'}`,
-                      color:        activeRes.answer === 'YES' ? '#22d3ee' : '#f87171',
-                    }}
-                  >
-                    {activeRes.answer === 'YES' ? '✓' : '✗'} {activeRes.answer}
+                <button 
+                  onClick={() => setActiveQueryId(null)}
+                  className="w-8 h-8 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 text-white/50 transition-colors"
+                >✕</button>
+              </div>
+
+              {/* Panel Body */}
+              <div className="p-6 flex-1 overflow-auto bg-[rgba(2,2,8,0.85)]">
+                {loading[activeQueryId] ? (
+                  <div className="h-full flex flex-col items-center justify-center text-white/40 gap-3">
+                    <div className="w-8 h-8 border-2 border-purple-500 border-t-transparent rounded-full animate-spin" />
+                    <p className="text-sm font-mono uppercase tracking-widest">Executing SQL...</p>
                   </div>
-                </div>
-              ) : rows.length === 0 ? (
-                <div className="h-full flex items-center justify-center text-white/30 text-sm italic">
-                  Query returned 0 rows.
-                </div>
-              ) : (
-                <div className="overflow-x-auto rounded-xl border border-purple-500/20">
-                  <table className="w-full text-left text-sm whitespace-nowrap">
-                    <thead style={{ background: 'rgba(124,58,237,0.15)' }}>
-                      <tr>
-                        {keys.map(k => (
-                          <th key={k} className="px-5 py-3 font-bold uppercase tracking-widest text-[10px]" style={{ color: 'rgba(196,181,253,0.9)', borderBottom: '1px solid rgba(124,58,237,0.3)' }}>
-                            {k.replace(/_/g, ' ')}
-                          </th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-white/5">
-                      {rows.map((row, i) => (
-                        <tr key={i} className="hover:bg-white/[0.04] transition-colors">
+                ) : !activeRes ? (
+                  <div className="h-full flex items-center justify-center text-white/30 text-sm">No data returned</div>
+                ) : activeRes.error ? (
+                  <div className="rounded-xl p-4 text-red-300 text-sm bg-red-500/10 border border-red-500/30">
+                    <strong className="block mb-1 text-red-400">SQL Error:</strong>
+                    {activeRes.error}
+                  </div>
+                ) : isBoolean ? (
+                  <div className="h-full flex items-center justify-center">
+                    <div
+                      className="inline-flex items-center gap-3 px-8 py-4 rounded-2xl text-2xl font-black shadow-xl"
+                      style={{
+                        background:   activeRes.answer === 'YES' ? 'rgba(6,182,212,0.1)' : 'rgba(239,68,68,0.1)',
+                        border:       `2px solid ${activeRes.answer === 'YES' ? 'rgba(6,182,212,0.4)' : 'rgba(239,68,68,0.4)'}`,
+                        color:        activeRes.answer === 'YES' ? '#22d3ee' : '#f87171',
+                      }}
+                    >
+                      {activeRes.answer === 'YES' ? '✓' : '✗'} {activeRes.answer}
+                    </div>
+                  </div>
+                ) : rows.length === 0 ? (
+                  <div className="h-full flex items-center justify-center text-white/30 text-sm italic">
+                    Query returned 0 rows.
+                  </div>
+                ) : (
+                  <div className="overflow-x-auto rounded-xl border border-purple-500/20">
+                    <table className="w-full text-left text-sm whitespace-nowrap">
+                      <thead style={{ background: 'rgba(124,58,237,0.15)' }}>
+                        <tr>
                           {keys.map(k => (
-                            <td key={k} className="px-5 py-3 text-white/80 font-mono text-xs">{row[k] ?? <span className="text-white/20 italic">NULL</span>}</td>
+                            <th key={k} className="px-5 py-3 font-bold uppercase tracking-widest text-[10px]" style={{ color: 'rgba(196,181,253,0.9)', borderBottom: '1px solid rgba(124,58,237,0.3)' }}>
+                              {k.replace(/_/g, ' ')}
+                            </th>
                           ))}
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            </div>
-          </motion.div>
+                      </thead>
+                      <tbody className="divide-y divide-white/5">
+                        {rows.map((row, i) => (
+                          <tr key={i} className="hover:bg-white/[0.04] transition-colors">
+                            {keys.map(k => (
+                              <td key={k} className="px-5 py-3 text-white/80 font-mono text-xs">{row[k] ?? <span className="text-white/20 italic">NULL</span>}</td>
+                            ))}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          </div>
         )}
       </AnimatePresence>
     </div>

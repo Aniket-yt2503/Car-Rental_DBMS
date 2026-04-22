@@ -25,7 +25,20 @@ function CinematicVideo({ onEnded }) {
     v.muted = true
     v.volume = 0
     v.play().catch(() => {})
-    const handleEnded = () => { if (onEnded) onEnded() }
+    
+    const handleEnded = () => {
+      if (onEnded) onEnded(true)
+      
+      // Wait 1 second and then loop
+      setTimeout(() => {
+        if (v) {
+          v.currentTime = 0;
+          v.play().catch(() => {});
+          if (onEnded) onEnded(false); // reset status bar
+        }
+      }, 1000);
+    }
+    
     v.addEventListener('ended', handleEnded)
     return () => v.removeEventListener('ended', handleEnded)
   }, [onEnded])
@@ -207,7 +220,7 @@ export default function Hero() {
       }}
     >
       {/* ── 1. Video — full screen ── */}
-      <CinematicVideo onEnded={() => setVideoEnded(true)} />
+      <CinematicVideo onEnded={(state) => setVideoEnded(state !== undefined ? state : true)} />
 
       {/* ── 5. Cursor glow ── */}
       <motion.div

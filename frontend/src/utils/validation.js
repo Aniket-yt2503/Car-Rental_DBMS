@@ -26,8 +26,18 @@ export function validateBookingForm(formData) {
 
   if (!returnDate) {
     errors.returnDate = 'Please select a return date';
-  } else if (pickupDate && new Date(returnDate) <= new Date(pickupDate)) {
-    errors.returnDate = 'Return date must be after pickup date';
+  } else if (pickupDate) {
+    const pickup = new Date(pickupDate);
+    const returnD = new Date(returnDate);
+    if (returnD <= pickup) {
+      errors.returnDate = 'Return date must be after pickup date';
+    } else {
+      const diffTime = returnD - pickup;
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+      if (diffDays > 30) {
+        errors.returnDate = 'Maximum rental period is 30 days';
+      }
+    }
   }
 
   return {
