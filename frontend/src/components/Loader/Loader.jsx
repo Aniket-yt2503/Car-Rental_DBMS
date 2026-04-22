@@ -1,129 +1,86 @@
 import { useEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { playLoaderSound } from '../../utils/sound.js'
 
-const BRAND = 'Phantom Ride'
-const MIN_DURATION_MS = 2200
+const BRAND = 'Midnight Ride'
+const MIN_DURATION_MS = 2500
 const READY_TIMEOUT_MS = 10000
 
-// ─── Phonk-style loading sound ────────────────────────────────────────────────
-function playPhonkSound() {
+// ─── Minimalist tactical sound ────────────────────────────────────────────────
+function playMidnightSound() {
   try {
     const ctx = new (window.AudioContext || window.webkitAudioContext)()
     const now = ctx.currentTime
 
-    // 808 bass kick
-    const kick = ctx.createOscillator()
-    const kickGain = ctx.createGain()
-    kick.connect(kickGain); kickGain.connect(ctx.destination)
-    kick.type = 'sine'
-    kick.frequency.setValueAtTime(150, now)
-    kick.frequency.exponentialRampToValueAtTime(40, now + 0.3)
-    kickGain.gain.setValueAtTime(0.6, now)
-    kickGain.gain.exponentialRampToValueAtTime(0.001, now + 0.4)
-    kick.start(now); kick.stop(now + 0.5)
+    // Deep sub bass pulse
+    const osc = ctx.createOscillator()
+    const gain = ctx.createGain()
+    osc.connect(gain); gain.connect(ctx.destination)
+    osc.type = 'sine'
+    osc.frequency.setValueAtTime(40, now)
+    osc.frequency.exponentialRampToValueAtTime(30, now + 1.5)
+    gain.gain.setValueAtTime(0, now)
+    gain.gain.linearRampToValueAtTime(0.3, now + 0.2)
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 1.8)
+    osc.start(now); osc.stop(now + 2)
 
-    // Phonk hi-hat pattern
-    const hatTimes = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8]
-    hatTimes.forEach(t => {
-      const bufSize = ctx.sampleRate * 0.05
-      const buf = ctx.createBuffer(1, bufSize, ctx.sampleRate)
-      const data = buf.getChannelData(0)
-      for (let i = 0; i < bufSize; i++) data[i] = (Math.random() * 2 - 1) * 0.15
-      const src = ctx.createBufferSource()
-      src.buffer = buf
-      const hGain = ctx.createGain()
-      const hFilter = ctx.createBiquadFilter()
-      hFilter.type = 'highpass'
-      hFilter.frequency.value = 8000
-      src.connect(hFilter); hFilter.connect(hGain); hGain.connect(ctx.destination)
-      hGain.gain.setValueAtTime(0.3, now + t)
-      hGain.gain.exponentialRampToValueAtTime(0.001, now + t + 0.04)
-      src.start(now + t); src.stop(now + t + 0.05)
-    })
-
-    // Synth stab
-    const stab = ctx.createOscillator()
-    const stabGain = ctx.createGain()
-    const stabDist = ctx.createWaveShaper()
-    const curve = new Float32Array(256)
-    for (let i = 0; i < 256; i++) { const x = (i * 2) / 256 - 1; curve[i] = (3 + 200) * x / (Math.PI + 200 * Math.abs(x)) }
-    stabDist.curve = curve
-    stab.connect(stabDist); stabDist.connect(stabGain); stabGain.connect(ctx.destination)
-    stab.type = 'sawtooth'
-    stab.frequency.setValueAtTime(220, now + 0.5)
-    stab.frequency.setValueAtTime(277, now + 0.75)
-    stab.frequency.setValueAtTime(330, now + 1.0)
-    stabGain.gain.setValueAtTime(0, now + 0.5)
-    stabGain.gain.linearRampToValueAtTime(0.12, now + 0.55)
-    stabGain.gain.exponentialRampToValueAtTime(0.001, now + 1.3)
-    stab.start(now + 0.5); stab.stop(now + 1.4)
+    // Subtle high-tech click
+    const click = ctx.createOscillator()
+    const cGain = ctx.createGain()
+    click.connect(cGain); cGain.connect(ctx.destination)
+    click.type = 'square'
+    click.frequency.setValueAtTime(1200, now + 0.5)
+    cGain.gain.setValueAtTime(0, now + 0.5)
+    cGain.gain.linearRampToValueAtTime(0.05, now + 0.51)
+    cGain.gain.exponentialRampToValueAtTime(0.001, now + 0.6)
+    click.start(now + 0.5); click.stop(now + 0.7)
   } catch (e) { /* silent */ }
 }
 
-// ─── Animated car silhouette (CSS only, no R3F) ───────────────────────────────
 function AnimatedCar({ progress }) {
   return (
-    <div className="relative w-48 h-20 mb-8">
-      {/* Car body */}
+    <div className="relative w-64 h-24 mb-12">
+      {/* Car body - Stealth profile */}
       <div
-        className="absolute bottom-4 left-0 right-0 h-8 rounded-lg"
-        style={{ background: 'linear-gradient(135deg, #1e1b4b, #4c1d95)', boxShadow: '0 0 20px rgba(168,85,247,0.4)' }}
+        className="absolute bottom-6 left-0 right-0 h-7 rounded-md"
+        style={{ background: 'linear-gradient(90deg, #0f172a, #334155, #0f172a)', border: '1px solid rgba(255,255,255,0.05)' }}
       />
-      {/* Roof */}
+      {/* Cockpit */}
       <div
-        className="absolute bottom-10 left-8 right-12 h-6 rounded-t-lg"
-        style={{ background: 'linear-gradient(135deg, #2d1b69, #5b21b6)' }}
+        className="absolute bottom-12 left-16 right-20 h-6 rounded-t-2xl"
+        style={{ background: 'linear-gradient(180deg, #1e293b, #0f172a)', border: '1px solid rgba(255,255,255,0.08)' }}
       />
-      {/* Windshield */}
+      {/* Headlight - Platinum beam */}
       <div
-        className="absolute bottom-10 right-10 w-8 h-5 rounded-sm"
-        style={{ background: 'rgba(147,197,253,0.3)', border: '1px solid rgba(147,197,253,0.2)' }}
+        className="absolute bottom-8 right-2 w-4 h-1.5 rounded-full"
+        style={{ background: '#f8fafc', boxShadow: '0 0 15px #f8fafc, 0 0 30px rgba(248,250,252,0.4)' }}
       />
-      {/* Headlight */}
-      <div
-        className="absolute bottom-6 right-1 w-3 h-2 rounded-sm"
-        style={{ background: '#fffde7', boxShadow: '0 0 8px #fffde7, 0 0 20px rgba(255,253,231,0.5)' }}
-      />
-      {/* Tail light */}
-      <div
-        className="absolute bottom-6 left-1 w-3 h-2 rounded-sm"
-        style={{ background: '#ef4444', boxShadow: '0 0 8px #ef4444' }}
-      />
-      {/* Wheels */}
-      {[{ left: '12px' }, { right: '12px' }].map((pos, i) => (
+      {/* Wheels - Technical detail */}
+      {[{ left: '20px' }, { right: '20px' }].map((pos, i) => (
         <div
           key={i}
-          className="absolute bottom-1 w-7 h-7 rounded-full border-2 border-purple-400"
+          className="absolute bottom-2 w-8 h-8 rounded-full border border-slate-800"
           style={{
             ...pos,
-            background: '#111827',
-            boxShadow: '0 0 8px rgba(168,85,247,0.5)',
-            animation: `spin ${0.3 + progress * 0.002}s linear infinite`,
+            background: '#020617',
+            animation: `spin ${0.4 - progress * 0.003}s linear infinite`,
           }}
         >
-          <div className="absolute inset-1 rounded-full border border-purple-500/50" />
+          <div className="absolute inset-1.5 rounded-full border-[0.5px] border-slate-700/50" />
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1px] h-full bg-slate-800/30" />
         </div>
       ))}
-      {/* Neon underglow */}
-      <div
-        className="absolute bottom-0 left-4 right-4 h-1 rounded-full"
-        style={{ background: 'linear-gradient(90deg, transparent, rgba(168,85,247,0.8), transparent)', filter: 'blur(3px)' }}
-      />
-      {/* Speed lines */}
-      {progress > 20 && [0, 1, 2, 3].map(i => (
-        <div
+      {/* Speed lines - Minimalist */}
+      {progress > 15 && [0, 1].map(i => (
+        <motion.div
           key={i}
-          className="absolute rounded-full"
+          className="absolute h-[1px] bg-white/10"
           style={{
-            left: `-${20 + i * 15}px`,
-            bottom: `${8 + i * 4}px`,
-            width: `${30 + i * 10}px`,
-            height: '1px',
-            background: `rgba(168,85,247,${0.6 - i * 0.12})`,
-            animation: `slideLeft 0.4s ease-out infinite`,
-            animationDelay: `${i * 0.1}s`,
+            left: `-${40 + i * 20}px`,
+            bottom: `${10 + i * 8}px`,
+            width: `${50 + i * 30}px`,
           }}
+          animate={{ x: [0, -100], opacity: [0, 0.4, 0] }}
+          transition={{ duration: 0.6, repeat: Infinity, delay: i * 0.2 }}
         />
       ))}
     </div>
@@ -132,11 +89,6 @@ function AnimatedCar({ progress }) {
 
 const loaderStyles = `
 @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-@keyframes slideLeft { from { transform: translateX(20px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-@keyframes scanline {
-  0% { transform: translateY(-100%); }
-  100% { transform: translateY(100vh); }
-}
 `
 
 export default function Loader({ onComplete }) {
@@ -147,11 +99,7 @@ export default function Loader({ onComplete }) {
   const exitTriggeredRef = useRef(false)
 
   useEffect(() => {
-    // Play loader ambient sound immediately on mount
-    const timer = setTimeout(() => {
-      playLoaderSound()
-    }, 100)
-    return () => clearTimeout(timer)
+    playMidnightSound()
   }, [])
 
   useEffect(() => {
@@ -159,7 +107,7 @@ export default function Loader({ onComplete }) {
     const tick = (now) => {
       const elapsed = now - startTimeRef.current
       const raw = elapsed / MIN_DURATION_MS
-      const eased = 1 - Math.pow(1 - Math.min(raw, 1), 2.5)
+      const eased = 1 - Math.pow(1 - Math.min(raw, 1), 3)
       const next = Math.min(Math.round(eased * 100), 100)
       setProgress(next)
       if (next < 100) rafRef.current = requestAnimationFrame(tick)
@@ -190,68 +138,75 @@ export default function Loader({ onComplete }) {
           <motion.div
             key="loader"
             className="fixed inset-0 z-[9999] flex flex-col items-center justify-center overflow-hidden"
-            style={{ background: '#030712' }}
-            exit={{ y: '-100%', opacity: 0, transition: { duration: 0.65, ease: [0.76, 0, 0.24, 1] } }}
+            style={{ background: '#050505' }}
+            exit={{ opacity: 0, transition: { duration: 1, ease: [0.16, 1, 0.3, 1] } }}
           >
-            {/* Scanline effect */}
-            <div
-              className="absolute inset-0 pointer-events-none opacity-[0.03]"
+            {/* Grain Overlay */}
+            <div className="absolute inset-0 pointer-events-none opacity-[0.03] phantom-noise" />
+
+            {/* Tactical Grid Background */}
+            <div 
+              className="absolute inset-0 pointer-events-none opacity-[0.02]"
               style={{
-                backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(168,85,247,0.5) 2px, rgba(168,85,247,0.5) 3px)',
-                backgroundSize: '100% 3px',
+                backgroundImage: 'linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)',
+                backgroundSize: '40px 40px'
               }}
             />
 
-            {/* Background glow */}
-            <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 50% 60%, rgba(124,58,237,0.12) 0%, transparent 70%)' }} />
-
-            {/* Animated car */}
+            {/* Animated Car */}
             <AnimatedCar progress={progress} />
 
-            {/* Brand */}
-            <div className="flex gap-0.5 mb-8">
-              {BRAND.split('').map((char, i) => (
-                <motion.span
-                  key={i}
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.08 + 0.1, duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-                  className="text-5xl font-black tracking-[0.3em] text-white select-none"
-                  style={{ textShadow: '0 0 30px rgba(168,85,247,0.6)' }}
-                >
-                  {char}
-                </motion.span>
-              ))}
+            {/* Brand - Modern Minimalist */}
+            <div className="flex flex-col items-center gap-4 mb-16">
+              <div className="flex gap-4">
+                {BRAND.split(' ').map((word, wi) => (
+                  <div key={wi} className="flex gap-1">
+                    {word.split('').map((char, i) => (
+                      <motion.span
+                        key={i}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: (wi * 8 + i) * 0.05, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                        className="text-4xl font-black tracking-tighter text-white select-none uppercase"
+                      >
+                        {char}
+                      </motion.span>
+                    ))}
+                  </div>
+                ))}
+              </div>
+              <motion.div
+                initial={{ scaleX: 0 }}
+                animate={{ scaleX: 1 }}
+                transition={{ delay: 0.5, duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+                className="w-12 h-[1px] bg-white/20"
+              />
             </div>
 
-            {/* Tagline */}
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.6 }}
-              className="text-white/30 text-xs uppercase tracking-[0.4em] mb-8"
-            >
-              Premium Car Rental
-            </motion.p>
-
-            {/* Progress bar */}
-            <div className="w-56 flex flex-col items-center gap-2">
-              <div className="w-full h-0.5 bg-white/8 rounded-full overflow-hidden">
+            {/* Progress - Tactical readout */}
+            <div className="w-64 flex flex-col items-center gap-4">
+              <div className="w-full flex items-center justify-between">
+                <span className="text-slate-600 text-[9px] font-black uppercase tracking-[0.4em]">Initializing System</span>
+                <span className="text-white text-[10px] font-black tracking-widest tabular-nums">{progress}%</span>
+              </div>
+              <div className="w-full h-px bg-white/5 rounded-full overflow-hidden">
                 <motion.div
-                  className="h-full rounded-full"
-                  style={{
-                    width: `${progress}%`,
-                    background: 'linear-gradient(90deg, #7c3aed, #a855f7, #c084fc)',
-                    boxShadow: '0 0 10px rgba(168,85,247,0.9)',
-                  }}
-                  transition={{ duration: 0.05 }}
+                  className="h-full bg-white/40"
+                  style={{ width: `${progress}%` }}
+                  transition={{ duration: 0.1 }}
                 />
               </div>
-              <div className="flex items-center justify-between w-full">
-                <span className="text-white/20 text-[10px] uppercase tracking-widest">Loading</span>
-                <span className="text-purple-400 text-xs font-mono tabular-nums">{progress}%</span>
-              </div>
             </div>
+
+            {/* Footer hint */}
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 1 }}
+              className="absolute bottom-12 flex flex-col items-center gap-2"
+            >
+               <span className="text-slate-800 text-[8px] font-black uppercase tracking-[0.6em]">Midnight Ride Automotive Group</span>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>

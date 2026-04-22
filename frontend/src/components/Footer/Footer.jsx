@@ -110,12 +110,12 @@ export default function Footer() {
       <div className="bg-black/50 border-t border-white/5 py-8">
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex flex-col md:flex-row items-center gap-4 text-center md:text-left">
-            <p className="text-slate-600 text-[11px] font-medium tracking-wide">
-              © {new Date().getFullYear()} Midnight Ride Automotive Group. All rights reserved.
+            <p className="text-slate-600 text-[11px] font-black uppercase tracking-[0.2em]">
+              © {new Date().getFullYear()} Midnight Ride Automotive Group
             </p>
             <div className="hidden md:block w-1 h-1 rounded-full bg-slate-800" />
-            <p className="text-slate-700 text-[11px] font-medium tracking-wide">
-              Registered in Canada · Private Limited
+            <p className="text-slate-700 text-[11px] font-black uppercase tracking-widest">
+              Private Limited · Strategic Hub Network
             </p>
           </div>
 

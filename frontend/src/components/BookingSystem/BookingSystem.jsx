@@ -354,19 +354,49 @@ export default function BookingSystem() {
                       {label('Personnel Data')}
                     </div>
                     <div className="grid grid-cols-2 gap-4 mb-4">
-                      <input type="text" placeholder="FIRST NAME" value={firstName} onChange={e => setFirstName(e.target.value)} className={inputClass} />
-                      <input type="text" placeholder="LAST NAME" value={lastName} onChange={e => setLastName(e.target.value)} className={inputClass} />
+                      <input 
+                        type="text" placeholder="FIRST NAME" value={firstName} 
+                        onChange={e => setFirstName(e.target.value.replace(/[^A-Za-z]/g, ''))} 
+                        className={inputClass} 
+                      />
+                      <input 
+                        type="text" placeholder="LAST NAME" value={lastName} 
+                        onChange={e => setLastName(e.target.value.replace(/[^A-Za-z]/g, ''))} 
+                        className={inputClass} 
+                      />
                     </div>
                     <div className="mb-4">
-                      <input type="text" placeholder="DRIVER LICENSE ID" value={driversLicense} onChange={e => setDriversLicense(e.target.value)} className={inputClass} />
+                      <input 
+                        type="text" placeholder="DRIVER LICENSE ID" value={driversLicense} 
+                        onChange={e => setDriversLicense(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, ''))} 
+                        className={inputClass} 
+                      />
                     </div>
                     <div className="mb-4">
                       <input type="text" placeholder="STREET ADDRESS" value={street} onChange={e => setStreet(e.target.value)} className={inputClass} />
                     </div>
                     <div className="grid grid-cols-3 gap-4">
-                      <input type="text" placeholder="CITY" value={city} onChange={e => setCity(e.target.value)} className={inputClass} />
-                      <input type="text" placeholder="PROV" value={province} onChange={e => setProvince(e.target.value)} className={inputClass} />
-                      <input type="text" placeholder="POSTAL" value={postalCode} onChange={e => setPostalCode(e.target.value)} className={inputClass} />
+                      <select 
+                        value={city} 
+                        onChange={e => {
+                          const found = locations.find(l => l.city === e.target.value);
+                          setCity(e.target.value);
+                          if (found) setProvince(found.province);
+                        }} 
+                        className={inputClass}
+                      >
+                        <option value="" disabled>SELECT CITY</option>
+                        {[...new Set(locations.map(l => l.city))].sort().map(c => (
+                          <option key={c} value={c} className="bg-slate-900">{c.toUpperCase()}</option>
+                        ))}
+                        <option value="Other" className="bg-slate-900">OTHER</option>
+                      </select>
+                      <input type="text" placeholder="PROV" value={province} onChange={e => setProvince(e.target.value.toUpperCase())} className={inputClass} />
+                      <input 
+                        type="text" placeholder="POSTAL" value={postalCode} 
+                        onChange={e => setPostalCode(e.target.value.toUpperCase().replace(/[^A-Z0-9 ]/g, ''))} 
+                        className={inputClass} 
+                      />
                     </div>
                     {driverError && <p className="mt-4 text-[10px] font-black uppercase tracking-widest text-amber-500">{driverError}</p>}
                   </>

@@ -4,16 +4,16 @@ import { motion, AnimatePresence } from 'framer-motion'
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
 
 const QUERIES = [
-  { id: 1, name: 'Active Renters',       desc: 'Last name of all customers currently renting a car' },
-  { id: 2, name: 'Rented Cars',          desc: 'Make and color of all cars currently rented out' },
-  { id: 3, name: 'Completed Rentals',    desc: 'For each completed rental: rental_price and rental_id' },
-  { id: 4, name: 'Managers List',        desc: 'Last names of all managers' },
-  { id: 5, name: 'Customer Names',       desc: 'Last and first names of all customers' },
-  { id: 6, name: 'Staff-Customer Match', desc: 'Is any employee also a customer?' },
-  { id: 7, name: 'President At HQ',      desc: 'Does our president work at headquarters?' },
-  { id: 8, name: 'Shortest Rentals',     desc: 'rental_id of all shortest completed rentals' },
-  { id: 9, name: 'Cheapest Rental',      desc: 'Price of the cheapest completed rental' },
-  { id: 10, name: 'Unused Cars',         desc: 'Makes of cars that have never been rented' },
+  { id: 1, name: 'Active Manifest',       desc: 'Current operational renters identification' },
+  { id: 2, name: 'Fleet Deployment',      desc: 'Active assets currently assigned' },
+  { id: 3, name: 'Transaction Logs',      desc: 'Completed logistical assignments and revenue' },
+  { id: 4, name: 'Command Chain',         desc: 'Senior management identification' },
+  { id: 5, name: 'Client Registry',       desc: 'Full personnel database access' },
+  { id: 6, name: 'Internal Audit',        desc: 'Conflict detection between staff and clients' },
+  { id: 7, name: 'HQ Verification',       desc: 'Command center residency check' },
+  { id: 8, name: 'Short-Cycle Data',      desc: 'Minimal duration assignment logs' },
+  { id: 9, name: 'Value Optimized',       desc: 'Lowest revenue assignment identification' },
+  { id: 10, name: 'Dormant Assets',        desc: 'Inventory with zero deployment history' },
 ]
 
 export default function QueriesPage() {
