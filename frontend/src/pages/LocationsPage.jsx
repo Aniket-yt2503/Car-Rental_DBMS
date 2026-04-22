@@ -9,7 +9,7 @@ import employees from '../data/employees.js'
 import { HEADQUARTERS } from '../data/employees.js'
 import dropOffCharges from '../data/dropOffCharges.js'
 import GlassCard from '../components/ui/GlassCard.jsx'
-import NeonBadge from '../components/ui/NeonBadge.jsx'
+import SleekBadge from '../components/ui/SleekBadge.jsx'
 import Footer from '../components/Footer/Footer.jsx'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -28,21 +28,21 @@ function DropOffMatrix({ locations }) {
   }
 
   return (
-    <div className="mt-14">
-      <div className="text-center mb-8">
-        <h2 className="text-3xl font-bold text-white mb-2">Drop-Off Charges</h2>
-        <p className="text-white/50 text-sm">One-way rental fees by route and car class</p>
+    <div className="mt-20">
+      <div className="text-center mb-12">
+        <h2 className="text-3xl font-black text-white uppercase tracking-tighter mb-2">Drop-Off Charges</h2>
+        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500">Route & class specific logistics audit</p>
       </div>
 
-      <div className="flex flex-wrap gap-2 justify-center mb-6">
+      <div className="flex flex-wrap gap-2 justify-center mb-10">
         {CAR_CLASSES.map(cls => (
           <button
             key={cls}
             onClick={() => setSelectedClass(cls)}
-            className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all duration-200 cursor-pointer ${
+            className={`px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all cursor-pointer ${
               selectedClass === cls
-                ? 'bg-purple-600/80 border-purple-500 text-white'
-                : 'bg-white/5 border-white/10 text-white/60 hover:bg-white/10 hover:text-white'
+                ? 'bg-white border-white text-black shadow-xl'
+                : 'bg-white/5 border-white/10 text-slate-500 hover:text-white'
             }`}
           >
             {cls}
@@ -50,27 +50,27 @@ function DropOffMatrix({ locations }) {
         ))}
       </div>
 
-      <div className="overflow-x-auto rounded-2xl border border-white/10 bg-white/3">
+      <div className="overflow-x-auto rounded-3xl border border-white/5 bg-white/[0.02] backdrop-blur-xl">
         <table className="w-full text-sm border-collapse">
           <thead>
-            <tr className="border-b border-white/10">
-              <th className="text-left p-4 text-white/40 text-xs uppercase tracking-wider font-medium">From ↓ / To →</th>
+            <tr className="border-b border-white/5">
+              <th className="text-left p-6 text-slate-600 text-[10px] font-black uppercase tracking-widest">Origin ↓ / Target →</th>
               {locations.map(loc => (
-                <th key={loc.id} className="p-4 text-white/60 text-xs font-medium text-center whitespace-nowrap">{loc.city}</th>
+                <th key={loc.id} className="p-6 text-white text-[10px] font-black uppercase tracking-widest text-center whitespace-nowrap">{loc.city}</th>
               ))}
             </tr>
           </thead>
           <tbody>
             {locations.map((fromLoc, ri) => (
-              <tr key={fromLoc.id} className={`border-b border-white/5 ${ri % 2 === 0 ? 'bg-white/[0.01]' : ''}`}>
-                <td className="p-4 text-white/60 text-xs font-semibold whitespace-nowrap">{fromLoc.city}</td>
+              <tr key={fromLoc.id} className={`border-b border-white/[0.03] last:border-0 hover:bg-white/[0.02] transition-colors`}>
+                <td className="p-6 text-white/60 text-[11px] font-black uppercase tracking-widest whitespace-nowrap">{fromLoc.city}</td>
                 {locations.map(toLoc => {
                   const charge = getCharge(fromLoc.id, toLoc.id)
                   return (
-                    <td key={toLoc.id} className="p-4 text-center">
+                    <td key={toLoc.id} className="p-6 text-center">
                       {charge === null
-                        ? <span className="text-white/15 text-xs">—</span>
-                        : <span className="text-amber-400 font-semibold text-xs">${charge.toFixed(2)}</span>
+                        ? <span className="text-white/10 text-xs">—</span>
+                        : <span className="text-amber-500 font-black text-xs tracking-widest">${charge.toFixed(2)}</span>
                       }
                     </td>
                   )
@@ -99,25 +99,25 @@ function LocationCards({ locations }) {
   const empCount = (locId) => employees.filter(e => e.locationId === locId).length
 
   return (
-    <div ref={cardsRef} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 mt-10">
+    <div ref={cardsRef} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-12">
       {/* HQ card — FIRST */}
       <div className="loc-card">
-        <GlassCard className="p-5 h-full flex flex-col gap-3" style={{ borderColor: 'rgba(168,85,247,0.35)', background: 'rgba(168,85,247,0.05)' }}>
+        <GlassCard className="p-8 h-full flex flex-col gap-6" style={{ borderColor: 'rgba(255,255,255,0.2)', background: 'rgba(255,255,255,0.05)' }}>
           <div className="flex items-start justify-between">
             <div>
-              <h3 className="text-white font-semibold text-sm">{HEADQUARTERS.name}</h3>
-              <p className="text-white/35 text-xs mt-0.5 font-mono">{HEADQUARTERS.id}</p>
+              <h3 className="text-white font-black text-lg uppercase tracking-tighter">{HEADQUARTERS.name}</h3>
+              <p className="text-slate-600 text-[10px] font-black tracking-widest mt-1 uppercase">{HEADQUARTERS.id}</p>
             </div>
-            <span className="text-xl">🏢</span>
+            <span className="text-2xl">🏢</span>
           </div>
-          <div className="text-white/60 text-sm leading-relaxed">
+          <div className="text-slate-500 text-xs font-bold leading-relaxed uppercase tracking-wider">
             <p>{HEADQUARTERS.streetAddress}</p>
             <p>{HEADQUARTERS.city}, {HEADQUARTERS.province}</p>
-            <p className="font-mono text-xs text-white/35 mt-1">{HEADQUARTERS.postalCode}</p>
+            <p className="font-black text-[10px] text-slate-700 mt-2">{HEADQUARTERS.postalCode}</p>
           </div>
-          <div className="mt-auto pt-3 border-t border-white/8">
-            <NeonBadge label="Headquarters" color="purple" />
-            <p className="text-white/35 text-xs mt-2">President + 2 Vice-Presidents</p>
+          <div className="mt-auto pt-6 border-t border-white/5">
+            <SleekBadge label="HQ Command" color="white" />
+            <p className="text-slate-600 text-[10px] font-black uppercase tracking-widest mt-3">PRESIDENTIAL SUITE + OPS</p>
           </div>
         </GlassCard>
       </div>
@@ -125,24 +125,23 @@ function LocationCards({ locations }) {
       {/* Branch cards */}
       {locations.map(loc => (
         <div key={loc.id} className="loc-card">
-          <GlassCard className="p-5 h-full flex flex-col gap-3">
+          <GlassCard className="p-8 h-full flex flex-col gap-6 hover:border-white/20 transition-all duration-500">
             <div className="flex items-start justify-between">
               <div>
-                <h3 className="text-white font-semibold text-sm">{loc.name}</h3>
-                <p className="text-white/35 text-xs mt-0.5 font-mono">{loc.id}</p>
+                <h3 className="text-white font-black text-lg uppercase tracking-tighter">{loc.name}</h3>
+                <p className="text-slate-600 text-[10px] font-black tracking-widest mt-1 uppercase">{loc.id}</p>
               </div>
-              <span className="text-xl">📍</span>
+              <span className="text-2xl">📍</span>
             </div>
-            <div className="text-white/60 text-sm leading-relaxed">
+            <div className="text-slate-500 text-xs font-bold leading-relaxed uppercase tracking-wider">
               <p>{loc.streetAddress}</p>
               <p>{loc.city}, {loc.province}</p>
-              <p className="font-mono text-xs text-white/35 mt-1">{loc.postalCode}</p>
+              <p className="font-black text-[10px] text-slate-700 mt-2">{loc.postalCode}</p>
             </div>
-            {loc.phone && <p className="text-white/40 text-xs">{loc.phone}</p>}
-            {loc.hours && <p className="text-white/30 text-xs">{loc.hours}</p>}
-            <div className="mt-auto pt-3 border-t border-white/8 flex items-center justify-between">
-              <span className="text-white/35 text-xs">{empCount(loc.id)} staff</span>
-              <span className="text-xs text-purple-400/60 font-mono">{loc.lat.toFixed(3)}, {loc.lng.toFixed(3)}</span>
+            {loc.phone && <p className="text-white/40 text-[10px] font-black uppercase tracking-widest">{loc.phone}</p>}
+            <div className="mt-auto pt-6 border-t border-white/5 flex items-center justify-between">
+              <span className="text-slate-700 text-[10px] font-black uppercase tracking-widest">{empCount(loc.id)} STAFF</span>
+              <span className="text-[10px] text-slate-800 font-black tracking-widest">{loc.lat.toFixed(3)}, {loc.lng.toFixed(3)}</span>
             </div>
           </GlassCard>
         </div>
@@ -160,49 +159,47 @@ export default function LocationsPage() {
   }, [])
 
   return (
-    <div className="min-h-screen" style={{ background: 'transparent' }}>
+    <div className="min-h-screen bg-[#050505]">
       {/* Page hero */}
-      <div className="relative pt-28 pb-10 px-6 overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute rounded-full opacity-15" style={{ width: '45vw', height: '45vw', top: '-10%', right: '-5%', filter: 'blur(60px)', background: 'radial-gradient(circle, rgba(59,130,246,0.6) 0%, transparent 70%)', willChange: 'transform' }} />
-          <div className="absolute rounded-full opacity-12" style={{ width: '35vw', height: '35vw', bottom: '-10%', left: '10%', filter: 'blur(55px)', background: 'radial-gradient(circle, rgba(168,85,247,0.5) 0%, transparent 70%)', willChange: 'transform' }} />
-        </div>
+      <div className="relative pt-40 pb-20 px-6 overflow-hidden">
         <div className="relative z-10 text-center">
+           <div className="inline-block px-4 py-1.5 rounded bg-white/5 border border-white/10 text-[9px] font-black uppercase tracking-[0.4em] text-white/50 mb-8">
+              Global Network Manifest
+            </div>
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-            className="text-4xl md:text-6xl font-black text-white mb-3"
+            className="text-6xl md:text-8xl font-black text-white mb-6 uppercase tracking-tighter"
           >
-            Our{' '}
-            <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-              Locations
-            </span>
+            Tactical <span className="text-slate-800">Coordinates</span>
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.5 }}
-            className="text-white/50 text-lg"
+            className="text-slate-500 text-xl font-medium max-w-2xl mx-auto"
           >
-            20+ cities worldwide — pick up and drop off anywhere.
+            Strategic hubs in 20+ metropolitan sectors. Operational anywhere.
           </motion.p>
         </div>
       </div>
 
-      {/* Compact interactive map */}
       <Locations />
 
-      {/* Branch cards + HQ */}
-      <div className="max-w-7xl mx-auto px-6 pb-8">
-        <h2 className="text-2xl font-bold text-white mb-2 mt-8">All Branches</h2>
-        <p className="text-white/40 text-sm mb-0">Click a city on the map or a card below to zoom in.</p>
+      <div className="max-w-7xl mx-auto px-6 pb-12 mt-20">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+           <div>
+              <h2 className="text-3xl font-black text-white uppercase tracking-tighter">Fleet Hubs</h2>
+              <p className="text-slate-500 text-[10px] font-black uppercase tracking-[0.3em] mt-2">Inventory distribution by sector</p>
+           </div>
+           <p className="text-slate-700 text-[10px] font-black uppercase tracking-widest">Select hub on map or manifest below</p>
+        </div>
         <LocationCards locations={locations} />
       </div>
 
-      {/* Drop-off charge matrix */}
       {locations.length > 0 && (
-        <div className="max-w-7xl mx-auto px-6 pb-16">
+        <div className="max-w-7xl mx-auto px-6 pb-32">
           <DropOffMatrix locations={locations} />
         </div>
       )}

@@ -1,5 +1,5 @@
 export { default as GlassCard } from './GlassCard.jsx'
-export { default as NeonBadge } from './NeonBadge.jsx'
+export { default as SleekBadge } from './SleekBadge.jsx'
 export { default as SleekButton } from './SleekButton.jsx'
 export { default as GlowDot } from './GlowDot.jsx'
 export { default as SectionWrapper } from './SectionWrapper.jsx'
