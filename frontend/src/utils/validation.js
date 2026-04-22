@@ -1,4 +1,15 @@
 /**
+ * Returns today's date string in local YYYY-MM-DD format.
+ */
+export function getLocalTodayString() {
+  const date = new Date();
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+/**
  * Validates the booking widget form data.
  * @param {Object} formData
  * @param {string} formData.pickupLocation
@@ -20,8 +31,12 @@ export function validateBookingForm(formData) {
     errors.returnLocation = 'Please select a return location';
   }
 
+  const todayStr = getLocalTodayString();
+
   if (!pickupDate) {
     errors.pickupDate = 'Please select a pickup date';
+  } else if (pickupDate < todayStr) {
+    errors.pickupDate = 'Pickup date cannot be in the past';
   }
 
   if (!returnDate) {

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import GlassCard from '../ui/GlassCard.jsx'
 import NeonButton from '../ui/NeonButton.jsx'
-import { validateBookingForm } from '../../utils/validation.js'
+import { validateBookingForm, getLocalTodayString } from '../../utils/validation.js'
 import { useAppContext } from '../../context/AppContext.jsx'
 import locations from '../../data/locations.js'
 
@@ -17,7 +17,7 @@ const errorClass = 'mt-1 text-xs text-red-400'
 
 export default function BookingWidget() {
   const { dispatch } = useAppContext()
-  const todayStr = new Date().toISOString().split('T')[0];
+  const todayStr = getLocalTodayString();
 
   const [form, setForm] = useState({
     pickupLocation: '',
