@@ -319,7 +319,7 @@ export default function BookingSystem() {
           initial={{ opacity: 0, scale: 0.96, y: 16 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-          className="w-full max-w-4xl"
+          className="w-full max-w-4xl overflow-y-auto scrollbar-none"
           style={{ maxHeight: '92vh' }}
         >
           {/* Header */}
@@ -561,7 +561,11 @@ export default function BookingSystem() {
         {confirmed && (
           <ConfirmedOverlay
             car={chosenCar}
-            onClose={() => { setConfirmed(false); dispatch({ type: 'CLOSE_BOOKING' }) }}
+            onClose={() => {
+              setConfirmed(false)
+              dispatch({ type: 'CLOSE_BOOKING' })
+              window.location.href = '/' // Quick way to navigate and reset state
+            }}
           />
         )}
       </AnimatePresence>
