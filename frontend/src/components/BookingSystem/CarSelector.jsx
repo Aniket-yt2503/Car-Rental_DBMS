@@ -82,17 +82,9 @@ export default function CarSelector({ onConfirm, onBack }) {
     if (lenis) lenis.stop()
     document.body.style.overflow = 'hidden'
 
-    const el = scrollRef.current
-    const onWheel = (e) => {
-      e.stopPropagation()
-      if (el) el.scrollTop += e.deltaY
-    }
-    if (el) el.addEventListener('wheel', onWheel, { passive: true })
-
     return () => {
       if (lenis) lenis.start()
       document.body.style.overflow = ''
-      if (el) el.removeEventListener('wheel', onWheel)
     }
   }, [state.lenis])
 
