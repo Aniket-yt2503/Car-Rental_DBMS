@@ -1,26 +1,13 @@
-import { useState, lazy, Suspense, memo } from 'react'
+import { useState, memo } from 'react'
 import { motion } from 'framer-motion'
 import GlassCard from '../ui/GlassCard.jsx'
 import useTilt from '../../hooks/useTilt.js'
-
-const Car3DViewer = lazy(() => import('./Car3DViewer.jsx'))
 
 const CLASS_COLOR_MAP = {
   Subcompact: 'slate',
   Compact: 'slate',
   Sedan: 'slate',
   Luxury: 'amber',
-}
-
-function ViewerLoader() {
-  return (
-    <div className="fixed inset-0 z-[200] bg-black flex items-center justify-center">
-      <div className="flex flex-col items-center gap-6">
-        <div className="w-12 h-px bg-white/20 animate-pulse" />
-        <p className="text-white/30 text-[10px] font-black uppercase tracking-[0.4em] animate-pulse">Initializing Hologram</p>
-      </div>
-    </div>
-  )
 }
 
 function InfoRow({ label, value, mono, highlight }) {
@@ -36,7 +23,6 @@ function InfoRow({ label, value, mono, highlight }) {
 
 export default memo(function CarCard({ car }) {
   const { ref, style } = useTilt({ maxTilt: 10, scale: 1.03 })
-  const [show3D, setShow3D] = useState(false)
   const [expanded, setExpanded] = useState(false)
 
   const isLuxury = car.carClass === 'Luxury'
@@ -103,14 +89,6 @@ export default memo(function CarCard({ car }) {
 
             {/* Actions */}
             <div className="flex flex-col gap-3 mt-auto">
-              <motion.button
-                onClick={() => setShow3D(true)}
-                whileHover={{ scale: 1.02, background: 'rgba(255,255,255,0.1)' }}
-                whileTap={{ scale: 0.98 }}
-                className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white/80 text-[10px] font-black uppercase tracking-[0.25em] cursor-pointer transition-all duration-300 hover:text-white"
-              >
-                <span className="text-sm">⬡</span> Initialize 3D View
-              </motion.button>
 
               <button
                 onClick={() => setExpanded(v => !v)}
@@ -123,11 +101,7 @@ export default memo(function CarCard({ car }) {
         </GlassCard>
       </div>
 
-      {show3D && (
-        <Suspense fallback={<ViewerLoader />}>
-          <Car3DViewer car={car} onClose={() => setShow3D(false)} />
-        </Suspense>
-      )}
+
     </>
   )
 })

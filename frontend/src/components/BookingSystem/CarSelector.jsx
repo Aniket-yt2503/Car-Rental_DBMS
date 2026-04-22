@@ -6,8 +6,6 @@ import SleekBadge from '../ui/SleekBadge.jsx'
 import SleekButton from '../ui/SleekButton.jsx'
 import { lazy, Suspense } from 'react'
 
-const Car3DViewer = lazy(() => import('../Vehicles/Car3DViewer.jsx'))
-
 const CLASS_COLOR_MAP = { Subcompact: 'slate', Compact: 'slate', Sedan: 'slate', Luxury: 'amber' }
 const CLASS_ORDER = ['Subcompact', 'Compact', 'Sedan', 'Luxury']
 
@@ -35,12 +33,7 @@ function CarOption({ car, selected, onSelect, onView3D }) {
           className={`w-full h-full object-cover transition-all duration-700 ${selected ? 'opacity-100 scale-105' : 'opacity-70 group-hover:opacity-100 group-hover:scale-105'}`}
         />
         {/* 3D button */}
-        <button
-          onClick={e => { e.stopPropagation(); onView3D(car) }}
-          className="absolute top-4 right-4 px-3 py-1.5 rounded-xl bg-black/60 border border-white/10 text-white/50 text-[10px] font-black uppercase tracking-widest hover:bg-white hover:text-black hover:border-white transition-all cursor-pointer backdrop-blur-md"
-        >
-          ⬡ VIEW 3D
-        </button>
+
         {selected && (
           <div className="absolute top-4 left-4 w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-xl">
             <span className="text-black text-xs font-black">✓</span>
@@ -72,7 +65,6 @@ export default function CarSelector({ onConfirm, onBack }) {
   const [cars, setCars] = useState([])
   const [loading, setLoading] = useState(true)
   const [selectedCar, setSelectedCar] = useState(null)
-  const [viewing3D, setViewing3D] = useState(null)
   const [classFilter, setClassFilter] = useState(formData?.requestedClass ?? 'All')
 
   const scrollRef = useRef(null)
@@ -185,7 +177,6 @@ export default function CarSelector({ onConfirm, onBack }) {
                     car={car}
                     selected={selectedCar?.id === car.id}
                     onSelect={setSelectedCar}
-                    onView3D={setViewing3D}
                   />
                 ))}
               </motion.div>
@@ -236,14 +227,7 @@ export default function CarSelector({ onConfirm, onBack }) {
         </div>
       </div>
 
-      {/* 3D Viewer */}
-      <AnimatePresence>
-        {viewing3D && (
-          <Suspense fallback={null}>
-            <Car3DViewer car={viewing3D} onClose={() => setViewing3D(null)} />
-          </Suspense>
-        )}
-      </AnimatePresence>
+
     </>
   )
 }
