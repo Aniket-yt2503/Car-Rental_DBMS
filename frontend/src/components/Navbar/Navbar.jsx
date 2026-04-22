@@ -44,7 +44,7 @@ function NavLink({ item, onNavigate }) {
 export default function Navbar() {
   const [scrollY, setScrollY] = useState(0)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const { state } = useAppContext()
+  const { state, dispatch } = useAppContext()
   const navigate = useNavigate()
 
   useEffect(() => {
