@@ -26,3 +26,6 @@ Thumbs.db
 
 # MySQL dump files (optional — uncomment below to ignore .sql files)
 # *.sql
+
+# Ignore prototype folder
+DBMS REAL/
