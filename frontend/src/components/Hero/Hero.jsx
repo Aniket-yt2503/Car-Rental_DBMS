@@ -1,6 +1,6 @@
-import { useRef, useCallback, useEffect, useState, useMemo } from 'react'
-import { motion, useSpring, useMotionValue, useTransform, AnimatePresence } from 'framer-motion'
-import BookingWidget from '../BookingWidget/index.js'
+import { useRef, useCallback, useEffect, useState } from 'react'
+import { motion, useSpring, useMotionValue, useTransform } from 'framer-motion'
+import { useAppContext } from '../../context/AppContext.jsx'
 
 const VIDEO_SRC = '/Luxury_Supercar_Drift_Cinematic_Loop.mp4'
 
@@ -228,10 +228,53 @@ function StatusBar({ videoEnded }) {
   )
 }
 
+// ── Cool Typing Animation ──────────────────────────────────────────────────────
+function Typewriter() {
+  const words = ["Unleash the Power.", "Experience True Luxury.", "Command the Road.", "Drive the Future."]
+  const [text, setText] = useState('')
+  const [wordIdx, setWordIdx] = useState(0)
+  const [isDeleting, setIsDeleting] = useState(false)
+
+  useEffect(() => {
+    const currentWord = words[wordIdx % words.length]
+    let timer
+
+    if (isDeleting) {
+      timer = setTimeout(() => {
+        setText(prev => currentWord.substring(0, prev.length - 1))
+        if (text.length <= 1) {
+          setIsDeleting(false)
+          setWordIdx(prev => prev + 1)
+        }
+      }, 40)
+    } else {
+      timer = setTimeout(() => {
+        setText(prev => currentWord.substring(0, prev.length + 1))
+        if (text.length === currentWord.length) {
+          timer = setTimeout(() => setIsDeleting(true), 2500)
+        }
+      }, 100)
+    }
+
+    return () => clearTimeout(timer)
+  }, [text, isDeleting, wordIdx, words])
+
+  return (
+    <span className="inline-block min-w-[280px]">
+      <span className="bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
+        {text}
+      </span>
+      <span className="animate-pulse text-purple-400">|</span>
+    </span>
+  )
+}
+
+
 // ── Main Hero ─────────────────────────────────────────────────────────────────
 export default function Hero() {
   const sectionRef  = useRef(null)
   const [videoEnded, setVideoEnded] = useState(false)
+  const { dispatch } = useAppContext()
 
   const mouseX = useMotionValue(0.5)
   const mouseY = useMotionValue(0.5)
@@ -254,6 +297,10 @@ export default function Hero() {
     mouseX.set((e.clientX - rect.left) / rect.width)
     mouseY.set((e.clientY - rect.top) / rect.height)
   }, [mouseX, mouseY])
+
+  const openBooking = () => {
+    dispatch({ type: 'OPEN_BOOKING', payload: {} })
+  }
 
   return (
     <section
@@ -380,28 +427,48 @@ export default function Hero() {
           }}
         />
 
-        {/* Subtitle */}
+        {/* Subtitle with Typewriter */}
         <motion.p
-          className="text-base md:text-lg leading-relaxed mb-10"
+          className="text-xl md:text-2xl font-bold leading-relaxed mb-10"
           style={{
-            color: 'rgba(240,235,225,0.55)',
-            maxWidth: '440px',
+            color: 'rgba(240,235,225,0.8)',
             textShadow: '0 1px 12px rgba(0,0,0,0.8)',
           }}
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
         >
-          Premium vehicles. Seamless booking. Unforgettable journeys.
+          <Typewriter />
         </motion.p>
 
-        {/* Booking widget */}
+        {/* Book Now Button */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.75, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
         >
-          <BookingWidget />
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={openBooking}
+            className="group relative inline-flex items-center justify-center gap-3 px-10 py-5 overflow-hidden rounded-full font-bold tracking-widest uppercase text-white shadow-[0_0_40px_rgba(124,58,237,0.4)] transition-shadow hover:shadow-[0_0_60px_rgba(124,58,237,0.6)]"
+            style={{
+              background: 'linear-gradient(135deg, #7c3aed 0%, #2563eb 100%)',
+              border: '1px solid rgba(255,255,255,0.1)',
+            }}
+          >
+            {/* Button Shine Effect */}
+            <div className="absolute inset-0 -translate-x-[150%] bg-gradient-to-r from-transparent via-white/20 to-transparent group-hover:animate-[shine_1.5s_ease-in-out_infinite]" />
+            <span className="relative z-10 text-base">Book Now</span>
+            <svg className="relative z-10 w-5 h-5 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+            </svg>
+            <style>{`
+              @keyframes shine {
+                100% { transform: translateX(150%); }
+              }
+            `}</style>
+          </motion.button>
         </motion.div>
 
         {/* Scroll cue */}
