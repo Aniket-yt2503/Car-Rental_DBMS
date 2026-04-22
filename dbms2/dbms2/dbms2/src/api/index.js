@@ -1,5 +1,0 @@
-export * from './cars.js'
-export * from './rentals.js'
-export * from './locations.js'
-export * from './pricing.js'
-export * from './promotions.js'
