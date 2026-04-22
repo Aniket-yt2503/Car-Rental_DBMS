@@ -4,19 +4,22 @@ require('dotenv').config();
 
 const app = express();
 
-// Allow requests from the deployed frontend (Vercel) and local dev
+// Allow requests from local dev, any Vercel preview URL, and the explicit FRONTEND_URL
 const allowedOrigins = [
   'http://localhost:5173',
   'http://localhost:3000',
-  process.env.FRONTEND_URL, // e.g. https://car-rental.vercel.app
+  process.env.FRONTEND_URL, // e.g. https://car-rental-dbms.vercel.app
 ].filter(Boolean);
 
 app.use(cors({
   origin: (origin, callback) => {
-    // Allow requests with no origin (e.g. curl, Postman, server-to-server)
+    // Allow requests with no origin (e.g. curl, Postman)
     if (!origin) return callback(null, true);
+    // Allow any vercel.app subdomain (covers preview deploys too)
+    if (origin.endsWith('.vercel.app')) return callback(null, true);
+    // Allow explicitly listed origins
     if (allowedOrigins.includes(origin)) return callback(null, true);
-    callback(new Error(`CORS policy: origin ${origin} not allowed`));
+    callback(new Error(`CORS blocked: ${origin}`));
   },
   credentials: true,
 }));
