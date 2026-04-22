@@ -1,0 +1,431 @@
+import { useRef, useCallback, useEffect, useState, useMemo } from 'react'
+import { motion, useSpring, useMotionValue, useTransform, AnimatePresence } from 'framer-motion'
+import BookingWidget from '../BookingWidget/index.js'
+
+const VIDEO_SRC = '/Luxury_Supercar_Drift_Cinematic_Loop.mp4'
+
+const containerVariants = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.1, delayChildren: 0.2 } },
+}
+const wordVariants = {
+  hidden: { opacity: 0, y: 32, filter: 'blur(12px)' },
+  visible: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 0.75, ease: [0.16, 1, 0.3, 1] } },
+}
+
+const HEADLINE_WORDS = ['Drive', 'the', 'Future,', 'Today.']
+
+// ── Right-half cinematic video ────────────────────────────────────────────────
+function CinematicVideo({ onEnded }) {
+  const videoRef = useRef(null)
+
+  useEffect(() => {
+    const v = videoRef.current
+    if (!v) return
+    v.muted = true          // belt-and-suspenders — no sound ever
+    v.volume = 0
+    v.play().catch(() => {})
+    const handleEnded = () => { if (onEnded) onEnded() }
+    v.addEventListener('ended', handleEnded)
+    return () => v.removeEventListener('ended', handleEnded)
+  }, [onEnded])
+
+  return (
+    /* Positioned on the RIGHT 55% — left side stays clean for text */
+    <div
+      className="absolute top-0 bottom-0 right-0 hidden lg:block overflow-hidden"
+      style={{ width: '55%', zIndex: 1 }}
+    >
+      <video
+        ref={videoRef}
+        src={VIDEO_SRC}
+        muted
+        playsInline
+        preload="auto"
+        style={{
+          position: 'absolute',
+          inset: 0,
+          width: '100%',
+          height: '100%',
+          objectFit: 'cover',
+          objectPosition: 'center center',
+        }}
+      />
+
+      {/* Left feather — blends into the dark background */}
+      <div className="absolute inset-y-0 left-0 w-48 pointer-events-none" style={{
+        background: 'linear-gradient(90deg, #050404 0%, rgba(5,4,4,0.85) 40%, rgba(5,4,4,0.3) 75%, transparent 100%)',
+      }} />
+      {/* Top fade */}
+      <div className="absolute inset-x-0 top-0 h-32 pointer-events-none" style={{
+        background: 'linear-gradient(180deg, #050404 0%, transparent 100%)',
+      }} />
+      {/* Bottom fade */}
+      <div className="absolute inset-x-0 bottom-0 h-44 pointer-events-none" style={{
+        background: 'linear-gradient(0deg, #050404 0%, rgba(5,4,4,0.5) 60%, transparent 100%)',
+      }} />
+      {/* Right edge fade */}
+      <div className="absolute inset-y-0 right-0 w-16 pointer-events-none" style={{
+        background: 'linear-gradient(270deg, #050404 0%, transparent 100%)',
+      }} />
+
+      {/* Cinematic grade — edge vignette */}
+      <div className="absolute inset-0 pointer-events-none" style={{
+        background: 'radial-gradient(ellipse 90% 90% at 65% 50%, transparent 35%, rgba(0,0,0,0.65) 100%)',
+      }} />
+      {/* Warm amber tone */}
+      <div className="absolute inset-0 pointer-events-none" style={{
+        background: 'linear-gradient(180deg, rgba(10,6,2,0.20) 0%, transparent 50%, rgba(20,8,2,0.35) 100%)',
+        mixBlendMode: 'multiply',
+      }} />
+    </div>
+  )
+}
+
+// ── Subtle noise grain overlay — cinematic texture ────────────────────────────
+function FilmGrain() {
+  return (
+    <div className="absolute inset-0 pointer-events-none" style={{ zIndex: 2, opacity: 0.035 }}>
+      <svg width="100%" height="100%" style={{ position: 'absolute', inset: 0 }}>
+        <filter id="grain">
+          <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch" />
+          <feColorMatrix type="saturate" values="0" />
+        </filter>
+        <rect width="100%" height="100%" filter="url(#grain)" />
+      </svg>
+    </div>
+  )
+}
+
+// ── Thin horizontal speed lines — motion feel ─────────────────────────────────
+const STREAKS = [
+  { top: '18%', width: 180, delay: 0.2,  dur: 3.2, opacity: 0.10 },
+  { top: '32%', width: 280, delay: 1.1,  dur: 3.8, opacity: 0.07 },
+  { top: '48%', width: 140, delay: 0.6,  dur: 2.8, opacity: 0.09 },
+  { top: '62%', width: 220, delay: 1.8,  dur: 3.5, opacity: 0.06 },
+  { top: '76%', width: 320, delay: 0.4,  dur: 4.0, opacity: 0.05 },
+]
+
+function SpeedLines() {
+  return (
+    <div className="absolute inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 3 }}>
+      <style>{`
+        @keyframes speedLine {
+          0%   { transform: translateX(105vw); opacity: 0; }
+          5%   { opacity: 1; }
+          95%  { opacity: 1; }
+          100% { transform: translateX(-10vw); opacity: 0; }
+        }
+      `}</style>
+      {STREAKS.map((s, i) => (
+        <div key={i} style={{
+          position: 'absolute', top: s.top, left: 0,
+          width: s.width, height: '1px',
+          background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.9), transparent)',
+          opacity: s.opacity,
+          animation: `speedLine ${s.dur}s linear ${s.delay}s infinite`,
+          willChange: 'transform',
+        }} />
+      ))}
+    </div>
+  )
+}
+
+// ── Ambient orbs — warm gold + cool silver, luxury palette ───────────────────
+function AmbientOrbs() {
+  return (
+    <div className="absolute inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 2 }}>
+      {/* Gold — top right */}
+      <div style={{
+        position: 'absolute', top: '-15%', right: '-5%',
+        width: '50vw', height: '50vw',
+        background: 'radial-gradient(circle, rgba(180,130,60,0.14) 0%, transparent 65%)',
+        filter: 'blur(90px)',
+        animation: 'orbA 26s ease-in-out infinite',
+        willChange: 'transform',
+      }} />
+      {/* Silver-blue — bottom right */}
+      <div style={{
+        position: 'absolute', bottom: '0%', right: '5%',
+        width: '35vw', height: '35vw',
+        background: 'radial-gradient(circle, rgba(160,170,200,0.10) 0%, transparent 65%)',
+        filter: 'blur(75px)',
+        animation: 'orbB 32s ease-in-out infinite',
+        willChange: 'transform',
+      }} />
+    </div>
+  )
+}
+
+// ── Stats sidebar ─────────────────────────────────────────────────────────────
+function HeroStats() {
+  const stats = [
+    { value: '200+', label: 'Luxury Fleet',   accent: 'rgba(200,160,80,0.9)' },
+    { value: '50+',  label: 'Global Cities',  accent: 'rgba(180,180,200,0.8)' },
+    { value: '4.9★', label: 'Client Rating',  accent: 'rgba(220,220,220,0.9)' },
+  ]
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: 24 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ delay: 1.4, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+      className="absolute right-8 bottom-32 z-20 hidden xl:flex flex-col gap-3"
+    >
+      {stats.map(({ value, label, accent }) => (
+        <div key={label} className="flex items-center gap-3 group">
+          {/* Accent bar */}
+          <div style={{
+            width: 2, height: 36, borderRadius: 2,
+            background: `linear-gradient(180deg, ${accent}, transparent)`,
+            boxShadow: `0 0 10px ${accent}`,
+            flexShrink: 0,
+          }} />
+          <div>
+            <p className="text-white font-bold text-sm tracking-wide leading-none">{value}</p>
+            <p className="text-white/35 text-[11px] mt-0.5 tracking-wider uppercase">{label}</p>
+          </div>
+        </div>
+      ))}
+    </motion.div>
+  )
+}
+
+// ── Bottom status bar ─────────────────────────────────────────────────────────
+function StatusBar({ videoEnded }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 1.8, duration: 0.6 }}
+      className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex items-center gap-4"
+    >
+      <div className="flex items-center gap-2.5 px-5 py-2.5 rounded-full"
+        style={{
+          background: 'rgba(255,255,255,0.04)',
+          border: '1px solid rgba(255,255,255,0.10)',
+          backdropFilter: 'blur(16px)',
+          WebkitBackdropFilter: 'blur(16px)',
+        }}
+      >
+        <div
+          className={!videoEnded ? 'animate-pulse' : ''}
+          style={{
+            width: 6, height: 6, borderRadius: '50%',
+            background: videoEnded ? 'rgba(200,160,80,0.9)' : '#22c55e',
+            boxShadow: videoEnded ? '0 0 8px rgba(200,160,80,0.8)' : '0 0 8px rgba(34,197,94,0.8)',
+            flexShrink: 0,
+          }}
+        />
+        <span className="text-white/40 text-[10px] uppercase tracking-[0.18em]">
+          {videoEnded ? 'Phantom Ride' : 'Live Preview'}
+        </span>
+        <div style={{ width: 1, height: 12, background: 'rgba(255,255,255,0.12)' }} />
+        <span className="text-white/25 text-[10px] font-mono tracking-wider">
+          {videoEnded ? 'Premium Fleet' : '∞ km/h'}
+        </span>
+      </div>
+    </motion.div>
+  )
+}
+
+// ── Main Hero ─────────────────────────────────────────────────────────────────
+export default function Hero() {
+  const sectionRef  = useRef(null)
+  const [videoEnded, setVideoEnded] = useState(false)
+
+  const mouseX = useMotionValue(0.5)
+  const mouseY = useMotionValue(0.5)
+  const springX = useSpring(mouseX, { stiffness: 40, damping: 20, mass: 1.2 })
+  const springY = useSpring(mouseY, { stiffness: 40, damping: 20, mass: 1.2 })
+
+  // Subtle cursor-following glow — warm gold
+  const glowBg = useTransform(
+    [springX, springY],
+    ([x, y]) => {
+      const rect = sectionRef.current?.getBoundingClientRect()
+      if (!rect) return 'none'
+      return `radial-gradient(500px circle at ${x * rect.width}px ${y * rect.height}px, rgba(180,130,60,0.08), transparent 65%)`
+    }
+  )
+
+  const handleMouseMove = useCallback((e) => {
+    const rect = sectionRef.current?.getBoundingClientRect()
+    if (!rect) return
+    mouseX.set((e.clientX - rect.left) / rect.width)
+    mouseY.set((e.clientY - rect.top) / rect.height)
+  }, [mouseX, mouseY])
+
+  return (
+    <section
+      ref={sectionRef}
+      id="home"
+      onMouseMove={handleMouseMove}
+      className="relative flex flex-col"
+      style={{
+        minHeight: '100svh',
+        background: '#050404',
+        overflow: 'hidden',   // hard clip — nothing escapes
+      }}
+    >
+      {/* ── 1. Video — right 55% only ── */}
+      <CinematicVideo onEnded={() => setVideoEnded(true)} />
+
+      {/* ── 1b. Left side dark atmosphere (video doesn't cover this) ── */}
+      <div className="absolute inset-0 pointer-events-none" style={{ zIndex: 1 }}>
+        <div style={{
+          position: 'absolute', inset: 0,
+          background: 'radial-gradient(ellipse 55% 70% at 20% 50%, rgba(30,20,10,0.35) 0%, transparent 70%)',
+        }} />
+      </div>
+
+      {/* ── 2. Film grain texture ── */}
+      <FilmGrain />
+
+      {/* ── 3. Ambient light orbs ── */}
+      <AmbientOrbs />
+
+      {/* ── 4. Speed lines ── */}
+      <SpeedLines />
+
+      {/* ── 5. Cursor glow ── */}
+      <motion.div
+        className="absolute inset-0 pointer-events-none"
+        style={{ background: glowBg, zIndex: 4 }}
+      />
+
+      {/* ── 6. Fine dot grid — luxury texture ── */}
+      <div className="absolute inset-0 pointer-events-none" style={{ zIndex: 4 }}>
+        <div style={{
+          position: 'absolute', inset: 0,
+          backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px)',
+          backgroundSize: '40px 40px',
+          maskImage: 'radial-gradient(ellipse 60% 60% at 50% 50%, black 10%, transparent 100%)',
+        }} />
+      </div>
+
+      {/* ── Stats ── */}
+      <HeroStats />
+
+      {/* ── Status bar ── */}
+      <StatusBar videoEnded={videoEnded} />
+
+      {/* ── Main content ── */}
+      <div
+        className="relative flex flex-col justify-center min-h-screen px-6 md:px-12 lg:px-20 pt-28 pb-20"
+        style={{ zIndex: 10, maxWidth: '680px' }}
+      >
+        {/* Eyebrow */}
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          className="flex items-center gap-3 mb-7"
+        >
+          {/* Gold accent line */}
+          <div style={{
+            width: 28, height: 1,
+            background: 'linear-gradient(90deg, transparent, rgba(200,160,80,0.9))',
+          }} />
+          <span style={{
+            fontSize: '10px',
+            fontWeight: 700,
+            letterSpacing: '0.22em',
+            textTransform: 'uppercase',
+            color: 'rgba(200,160,80,0.85)',
+          }}>
+            Phantom Ride — Premium Car Rental
+          </span>
+        </motion.div>
+
+        {/* Headline */}
+        <motion.h1
+          className="font-black leading-[1.0] tracking-tight mb-7"
+          style={{ fontSize: 'clamp(2.8rem, 6vw, 5rem)' }}
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+        >
+          {HEADLINE_WORDS.map((word, i) => (
+            <motion.span
+              key={i}
+              variants={wordVariants}
+              className="inline-block mr-[0.2em] last:mr-0"
+              style={i === 2 ? {
+                background: 'linear-gradient(135deg, #f5f0e8 0%, #c8a050 40%, #e8c878 70%, #f5f0e8 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+                filter: 'drop-shadow(0 0 28px rgba(200,160,80,0.6))',
+              } : {
+                color: '#f5f0e8',
+                textShadow: '0 2px 30px rgba(0,0,0,0.95)',
+              }}
+            >
+              {word}
+            </motion.span>
+          ))}
+        </motion.h1>
+
+        {/* Divider */}
+        <motion.div
+          initial={{ scaleX: 0, opacity: 0 }}
+          animate={{ scaleX: 1, opacity: 1 }}
+          transition={{ delay: 0.55, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          style={{
+            height: 1,
+            width: 80,
+            background: 'linear-gradient(90deg, rgba(200,160,80,0.8), transparent)',
+            transformOrigin: 'left',
+            marginBottom: '1.5rem',
+          }}
+        />
+
+        {/* Subtitle */}
+        <motion.p
+          className="text-base md:text-lg leading-relaxed mb-10"
+          style={{
+            color: 'rgba(240,235,225,0.55)',
+            maxWidth: '440px',
+            textShadow: '0 1px 12px rgba(0,0,0,0.8)',
+          }}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+        >
+          Premium vehicles. Seamless booking. Unforgettable journeys.
+        </motion.p>
+
+        {/* Booking widget */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.75, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <BookingWidget />
+        </motion.div>
+
+        {/* Scroll cue */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 2.0, duration: 1.0 }}
+          className="flex items-center gap-3 mt-10"
+        >
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
+            <div style={{ width: 1, height: 28, background: 'linear-gradient(180deg, transparent, rgba(200,160,80,0.6))' }} />
+            <div
+              className="animate-bounce"
+              style={{
+                width: 4, height: 4, borderRadius: '50%',
+                background: 'rgba(200,160,80,0.7)',
+              }}
+            />
+          </div>
+          <span style={{ color: 'rgba(255,255,255,0.2)', fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase' }}>
+            Scroll to explore
+          </span>
+        </motion.div>
+      </div>
+    </section>
+  )
+}
