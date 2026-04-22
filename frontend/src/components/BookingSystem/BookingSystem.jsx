@@ -183,6 +183,17 @@ export default function BookingSystem() {
   const [startOdometer, setStartOdometer] = useState('')
   const [endOdometer, setEndOdometer] = useState('')
   const [odometerError, setOdometerError] = useState(null)
+  
+  // Driver Details
+  const [firstName, setFirstName] = useState('')
+  const [lastName, setLastName] = useState('')
+  const [driversLicense, setDriversLicense] = useState('')
+  const [street, setStreet] = useState('')
+  const [city, setCity] = useState('')
+  const [province, setProvince] = useState('')
+  const [postalCode, setPostalCode] = useState('')
+  const [driverError, setDriverError] = useState(null)
+
   const [confirmed, setConfirmed] = useState(false)
 
   // Pause Lenis + lock body scroll while summary is open
@@ -273,6 +284,16 @@ export default function BookingSystem() {
 
   async function handleConfirm() {
     if (odometerError || loading) return
+
+    // Validate driver details if they are entering them
+    if (firstName || lastName || driversLicense) {
+      if (!firstName || !lastName || !driversLicense || !street || !city || !province || !postalCode) {
+        setDriverError('Please fill out all driver details to proceed.');
+        return;
+      }
+    }
+    setDriverError(null);
+
     setLoading(true)
     const result = await createRental({
       carId:             chosenCar.id || chosenCar.car_id,
@@ -287,7 +308,16 @@ export default function BookingSystem() {
       returnLocationId:  formData.returnLocation || formData.pickupLocation,
       endOdometer:       endOdometer ? Number(endOdometer) : null,
       fuelLevel:         fuelLevel,
-      finalPrice:        finalPrice
+      finalPrice:        finalPrice,
+
+      // Driver details
+      firstName,
+      lastName,
+      street,
+      city,
+      province,
+      postalCode,
+      driversLicense
     })
     setLoading(false)
     if (result.error) {
@@ -393,6 +423,32 @@ export default function BookingSystem() {
                       <Row label="Duration" value={`${totalDays} day${totalDays !== 1 ? 's' : ''}`} />
                       <Row label="Mode" value={mode} />
                     </div>
+                  </>
+                )}
+
+                {/* Driver Details */}
+                {card(
+                  <>
+                    <div className="flex items-center justify-between mb-2">
+                      {label('Driver Details')}
+                      <span className="text-[9px] text-white/30 uppercase tracking-widest">Required</span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2 mb-2">
+                      <input type="text" placeholder="First Name" value={firstName} onChange={e => setFirstName(e.target.value)} className="w-full rounded-lg px-2.5 py-2 text-xs text-white placeholder-white/20 focus:outline-none transition-colors" style={{ background: 'rgba(124,58,237,0.06)', border: '1px solid rgba(124,58,237,0.2)' }} />
+                      <input type="text" placeholder="Last Name" value={lastName} onChange={e => setLastName(e.target.value)} className="w-full rounded-lg px-2.5 py-2 text-xs text-white placeholder-white/20 focus:outline-none transition-colors" style={{ background: 'rgba(124,58,237,0.06)', border: '1px solid rgba(124,58,237,0.2)' }} />
+                    </div>
+                    <div className="mb-2">
+                      <input type="text" placeholder="Driver's License (e.g. DL-X123)" value={driversLicense} onChange={e => setDriversLicense(e.target.value)} className="w-full rounded-lg px-2.5 py-2 text-xs text-white placeholder-white/20 focus:outline-none transition-colors" style={{ background: 'rgba(124,58,237,0.06)', border: '1px solid rgba(124,58,237,0.2)' }} />
+                    </div>
+                    <div className="mb-2">
+                      <input type="text" placeholder="Street Address" value={street} onChange={e => setStreet(e.target.value)} className="w-full rounded-lg px-2.5 py-2 text-xs text-white placeholder-white/20 focus:outline-none transition-colors" style={{ background: 'rgba(124,58,237,0.06)', border: '1px solid rgba(124,58,237,0.2)' }} />
+                    </div>
+                    <div className="grid grid-cols-3 gap-2">
+                      <input type="text" placeholder="City" value={city} onChange={e => setCity(e.target.value)} className="w-full rounded-lg px-2.5 py-2 text-xs text-white placeholder-white/20 focus:outline-none transition-colors" style={{ background: 'rgba(124,58,237,0.06)', border: '1px solid rgba(124,58,237,0.2)' }} />
+                      <input type="text" placeholder="Prov" value={province} onChange={e => setProvince(e.target.value)} className="w-full rounded-lg px-2.5 py-2 text-xs text-white placeholder-white/20 focus:outline-none transition-colors" style={{ background: 'rgba(124,58,237,0.06)', border: '1px solid rgba(124,58,237,0.2)' }} />
+                      <input type="text" placeholder="Postal" value={postalCode} onChange={e => setPostalCode(e.target.value)} className="w-full rounded-lg px-2.5 py-2 text-xs text-white placeholder-white/20 focus:outline-none transition-colors" style={{ background: 'rgba(124,58,237,0.06)', border: '1px solid rgba(124,58,237,0.2)' }} />
+                    </div>
+                    {driverError && <p className="mt-2 text-[10px] text-red-400">{driverError}</p>}
                   </>
                 )}
 

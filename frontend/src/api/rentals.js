@@ -20,6 +20,15 @@ export async function createRental(bookingResult) {
       odometer_after:     bookingResult.endOdometer || null,
       gas_level_returned: bookingResult.fuelLevel ? bookingResult.fuelLevel.toLowerCase() : null,
       rental_price:       bookingResult.finalPrice || null,
+      
+      // Driver details
+      firstName:          bookingResult.firstName || null,
+      lastName:           bookingResult.lastName || null,
+      street:             bookingResult.street || null,
+      city:               bookingResult.city || null,
+      province:           bookingResult.province || null,
+      postalCode:         bookingResult.postalCode || null,
+      driversLicense:     bookingResult.driversLicense || null,
     };
 
     const res = await fetch(`${API_URL}/rentals`, {
