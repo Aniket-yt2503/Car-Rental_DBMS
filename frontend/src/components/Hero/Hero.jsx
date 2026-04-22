@@ -205,7 +205,7 @@ export default function Hero() {
             textTransform: 'uppercase',
             color: 'rgba(255,255,255,0.4)',
           }}>
-            Midnight Stealth — Premium Automotive
+            Midnight Ride — Luxury Automotive
           </span>
         </motion.div>
 

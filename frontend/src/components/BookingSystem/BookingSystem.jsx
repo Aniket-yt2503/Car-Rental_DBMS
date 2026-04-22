@@ -191,7 +191,7 @@ export default function BookingSystem() {
       >
         <div className="relative w-full max-w-3xl">
           <div className="flex justify-between items-center mb-6 px-4">
-            <h1 className="text-xl font-black text-white uppercase tracking-[0.2em]">INITIALIZE TRIP</h1>
+            <h1 className="text-xl font-black text-white uppercase tracking-[0.2em]">Book Your Ride</h1>
             <button
               onClick={() => dispatch({ type: 'CLOSE_BOOKING' })}
               className="w-10 h-10 flex items-center justify-center rounded-xl text-white/20 hover:text-white transition-all bg-white/5 border border-white/10 hover:border-white/30 cursor-pointer"
@@ -277,7 +277,7 @@ export default function BookingSystem() {
 
   const card = (children, className = '') => (
     <div
-      className={`rounded-3xl p-8 bg-white/5 border border-white/10 ${className}`}
+      className={`rounded-3xl p-6 md:p-8 bg-white/5 border border-white/10 ${className}`}
     >
       {children}
     </div>
@@ -312,7 +312,7 @@ export default function BookingSystem() {
           }}
         >
           <div className="flex items-center justify-between mb-8 px-4">
-            <h1 className="text-2xl font-black text-white uppercase tracking-[0.25em]">Summary Manifest</h1>
+            <h1 className="text-2xl font-black text-white uppercase tracking-[0.25em]">Reservation Summary</h1>
             <button
               onClick={() => dispatch({ type: 'CLOSE_BOOKING' })}
               className="w-10 h-10 flex items-center justify-center rounded-xl text-white/20 hover:text-white transition-all bg-white/5 border border-white/10 hover:border-white/30 cursor-pointer"
@@ -324,7 +324,7 @@ export default function BookingSystem() {
               <div className="flex flex-col gap-6">
                 {card(
                   <>
-                    {label('Operational Asset')}
+                    {label('Vehicle Details')}
                     <div className="flex gap-6 items-center">
                       <img src={chosenCar.imageUrl} alt={chosenCar.model} className="w-32 h-20 object-cover rounded-2xl shrink-0 border border-white/10" />
                       <div className="flex-1 min-w-0">
@@ -445,7 +445,7 @@ export default function BookingSystem() {
                     variant="amber"
                     className="w-full py-5 text-base font-black uppercase tracking-[0.3em]"
                    >
-                     {loading ? 'Processing...' : 'Authorize Deployment'}
+                     {loading ? 'Processing...' : 'Confirm Reservation'}
                    </SleekButton>
                 </div>
               </div>

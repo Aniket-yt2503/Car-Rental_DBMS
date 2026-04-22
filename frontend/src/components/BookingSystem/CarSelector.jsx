@@ -118,9 +118,9 @@ export default function CarSelector({ onConfirm, onBack }) {
           {/* Header */}
           <div className="flex items-center justify-between mb-12">
             <div>
-              <h1 className="text-3xl font-black text-white uppercase tracking-tighter">SELECT MISSION ASSET</h1>
+              <h1 className="text-3xl font-black text-white uppercase tracking-tighter">SELECT YOUR VEHICLE</h1>
               <p className="text-slate-500 text-[10px] font-black uppercase tracking-[0.3em] mt-2">
-                Deployment for {formData?.requestedClass} class · {filtered.length} assets ready
+                Available {formData?.requestedClass} class · {filtered.length} vehicles ready
               </p>
             </div>
             <button
@@ -228,7 +228,7 @@ export default function CarSelector({ onConfirm, onBack }) {
                   variant="amber"
                   className="w-full sm:w-64 py-4 text-[11px] font-black uppercase tracking-[0.3em]"
                 >
-                  INITIALIZE AUTHORIZATION
+                  INITIALIZE RESERVATION
                 </SleekButton>
               </div>
             </div>

@@ -15,7 +15,7 @@ function SectionHeader({ filtered }) {
   return (
     <div className="text-center mb-10">
       <p className="text-slate-500 text-[10px] font-black uppercase tracking-[0.3em]">
-        <span className="text-white">{filtered}</span> Units Ready For Deployment
+        <span className="text-white">{filtered}</span> Vehicles Available For Rent
       </p>
     </div>
   )
@@ -112,7 +112,7 @@ export default function Vehicles() {
         {loading && (
           <div className="flex flex-col items-center justify-center py-32 gap-4">
             <div className="w-12 h-px bg-white/20 animate-pulse" />
-            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-white/20 animate-pulse">Initializing Fleet</p>
+            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-white/20 animate-pulse">Syncing Fleet</p>
           </div>
         )}
         

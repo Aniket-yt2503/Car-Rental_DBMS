@@ -221,8 +221,8 @@ function ComparisonTable({ pricingData }) {
       className="mt-32 rounded-3xl overflow-hidden bg-white/5 border border-white/10"
     >
       <div className="p-8 border-b border-white/5 bg-black/20">
-        <h3 className="text-xl font-black text-white uppercase tracking-tighter">Full Manifest Comparison</h3>
-        <p className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.3em] mt-2">Side-by-side metric audit</p>
+        <h3 className="text-xl font-black text-white uppercase tracking-tighter">Fleet Comparison</h3>
+        <p className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.3em] mt-2">Side-by-side rate audit</p>
       </div>
       <div className="overflow-x-auto">
         <table className="w-full">
@@ -230,7 +230,7 @@ function ComparisonTable({ pricingData }) {
             <tr className="border-b border-white/5">
               <th className="text-left px-8 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-slate-600">Category</th>
               {pricingData.map(p => (
-                <th key={p.carClass} className="px-8 py-6 text-[11px] font-black uppercase tracking-[0.3em] text-white text-center">
+                <th key={p.carClass} className="px-4 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-white text-center">
                   {p.carClass}
                 </th>
               ))}
@@ -243,7 +243,7 @@ function ComparisonTable({ pricingData }) {
                   <span className="text-[11px] font-black uppercase tracking-[0.2em] text-white">{d.label}</span>
                 </td>
                 {pricingData.map(p => (
-                  <td key={p.carClass} className="px-8 py-6 text-center text-slate-400 font-bold text-sm">
+                  <td key={p.carClass} className="px-4 py-6 text-center text-slate-400 font-bold text-xs md:text-sm">
                     ${p[d.key].toFixed(2)}
                   </td>
                 ))}
@@ -314,7 +314,7 @@ export default function PricingPage() {
           {loading ? (
             <div className="flex flex-col items-center justify-center py-32 gap-6">
               <div className="w-16 h-px bg-white/20 animate-pulse" />
-              <p className="text-[10px] font-black uppercase tracking-[0.4em] text-white/20 animate-pulse">Retrieving Audit Data</p>
+              <p className="text-[10px] font-black uppercase tracking-[0.4em] text-white/20 animate-pulse">Syncing Rates</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -336,7 +336,7 @@ export default function PricingPage() {
               <h3 className="text-4xl font-black text-white mb-6 uppercase tracking-tighter">Ready for Departure?</h3>
               <p className="text-slate-500 font-medium text-lg mb-12">Initialize your experience in under 120 seconds.</p>
               <SleekButton onClick={() => { window.scrollTo({ top: 0 }); window.location.href = "/" }} variant="amber" className="px-16 py-5 text-base uppercase tracking-widest">
-                Start Mission
+                Confirm Booking
               </SleekButton>
             </div>
           </motion.div>
