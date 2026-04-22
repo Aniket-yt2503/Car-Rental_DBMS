@@ -304,7 +304,12 @@ export default function BookingSystem() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
           className="w-full max-w-5xl overflow-y-auto scrollbar-none relative"
-          style={{ maxHeight: '100dvh', padding: '2rem 0' }}
+          style={{ 
+            maxHeight: '92dvh', 
+            padding: '2rem 1rem',
+            overscrollBehavior: 'contain',
+            WebkitOverflowScrolling: 'touch'
+          }}
         >
           <div className="flex items-center justify-between mb-8 px-4">
             <h1 className="text-2xl font-black text-white uppercase tracking-[0.25em]">Summary Manifest</h1>
