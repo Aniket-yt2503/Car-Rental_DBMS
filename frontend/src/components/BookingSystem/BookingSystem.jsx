@@ -303,8 +303,8 @@ export default function BookingSystem() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          className="w-full max-w-5xl overflow-y-auto scrollbar-none"
-          style={{ maxHeight: '92vh' }}
+          className="w-full max-w-5xl overflow-y-auto scrollbar-none relative"
+          style={{ maxHeight: '100dvh', padding: '2rem 0' }}
         >
           <div className="flex items-center justify-between mb-8 px-4">
             <h1 className="text-2xl font-black text-white uppercase tracking-[0.25em]">Summary Manifest</h1>
@@ -315,7 +315,7 @@ export default function BookingSystem() {
           </div>
 
           {!loading && chosenCar && (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 px-4">
               <div className="flex flex-col gap-6">
                 {card(
                   <>
@@ -331,19 +331,6 @@ export default function BookingSystem() {
                         </div>
                       </div>
                       <button onClick={() => setStep('select')} className="text-slate-700 hover:text-white text-[9px] font-black uppercase tracking-widest transition-colors">Reassign</button>
-                    </div>
-                  </>
-                )}
-
-                {card(
-                  <>
-                    {label('Logistical Parameters')}
-                    <div className="space-y-1">
-                      <Row label="Point Alpha" value={locName(formData.pickupLocation)} />
-                      <Row label="Point Omega" value={locName(formData.returnLocation)} />
-                      <Row label="Log Start" value={formData.pickupDate} />
-                      <Row label="Log End" value={formData.returnDate} />
-                      <Row label="Total Cycle" value={`${totalDays} DAYS`} />
                     </div>
                   </>
                 )}
@@ -406,50 +393,6 @@ export default function BookingSystem() {
               <div className="flex flex-col gap-6">
                 {card(
                   <>
-                    {label('Asset Condition')}
-                    <p className="text-[9px] text-slate-600 font-black uppercase tracking-widest mb-4">Logistical Fuel State</p>
-                    <div className="flex flex-wrap gap-2 mb-6">
-                      {FUEL_LEVELS.map(level => (
-                        <button
-                          key={level}
-                          type="button"
-                          onClick={() => setFuelLevel(level)}
-                          className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all cursor-pointer ${
-                            fuelLevel === level 
-                            ? 'bg-white/10 border-white/40 text-white shadow-[0_0_20px_rgba(255,255,255,0.05)]' 
-                            : 'bg-white/5 border-white/10 text-slate-600 hover:text-white'
-                          }`}
-                        >
-                          {level.replace('_', ' ')}
-                        </button>
-                      ))}
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <p className="text-[9px] text-slate-600 font-black uppercase tracking-widest mb-2">Initial ODO</p>
-                        <input
-                          type="number" value={startOdometer}
-                          onChange={e => setStartOdometer(e.target.value)}
-                          placeholder="KM"
-                          className={inputClass}
-                        />
-                      </div>
-                      <div>
-                        <p className="text-[9px] text-slate-600 font-black uppercase tracking-widest mb-2">Final ODO</p>
-                        <input
-                          type="number" value={endOdometer}
-                          onChange={e => setEndOdometer(e.target.value)}
-                          placeholder="KM"
-                          className={inputClass + (odometerError ? " border-amber-500/50" : "")}
-                        />
-                      </div>
-                    </div>
-                    {odometerError && <p className="mt-4 text-[10px] font-black uppercase tracking-widest text-amber-500">{odometerError}</p>}
-                  </>
-                )}
-
-                {card(
-                  <>
                     <div className="flex items-center justify-between mb-4">
                       {label('Financial Audit')}
                       <div className="flex gap-2">
@@ -460,15 +403,19 @@ export default function BookingSystem() {
 
                     {pricingEntry ? (
                       <div className="space-y-3">
+                        <div className="flex justify-between items-center py-2 border-b border-white/5">
+                          <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Rental Period</span>
+                          <span className="text-[11px] font-black text-white/80 uppercase tracking-widest">{totalDays} Days</span>
+                        </div>
                         {billingLines.map(line => (
                           <div key={line.unit} className="flex justify-between items-center py-1">
-                            <span className="text-[11px] font-bold text-slate-500 uppercase tracking-widest">{UNIT_LABELS[line.unit]} CYCLE ×{line.quantity}</span>
+                            <span className="text-[11px] font-bold text-slate-500 uppercase tracking-widest">{UNIT_LABELS[line.unit]} Cycle ×{line.quantity}</span>
                             <span className="text-[11px] font-black text-white/80 uppercase tracking-widest">${fmt(line.subtotal)}</span>
                           </div>
                         ))}
                         {dropOffCharge > 0 && (
                           <div className="flex justify-between items-center py-1">
-                            <span className="text-[11px] font-bold text-amber-500 uppercase tracking-widest">LOGISTICAL CHARGE</span>
+                            <span className="text-[11px] font-bold text-amber-500 uppercase tracking-widest">Logistical Charge</span>
                             <span className="text-[11px] font-black text-amber-500 uppercase tracking-widest">${fmt(dropOffCharge)}</span>
                           </div>
                         )}
@@ -478,7 +425,10 @@ export default function BookingSystem() {
                         </div>
                       </div>
                     ) : (
-                      <p className="text-slate-700 text-[10px] font-black uppercase animate-pulse">Calculating audit...</p>
+                      <div className="py-12 flex flex-col items-center gap-4">
+                        <div className="w-8 h-px bg-white/20 animate-pulse" />
+                        <p className="text-slate-700 text-[10px] font-black uppercase animate-pulse">Calculating audit...</p>
+                      </div>
                     )}
                   </>
                 )}
@@ -486,7 +436,7 @@ export default function BookingSystem() {
                 <div className="mt-2">
                    <SleekButton 
                     onClick={handleConfirm}
-                    disabled={!!odometerError || loading}
+                    disabled={loading}
                     variant="amber"
                     className="w-full py-5 text-base font-black uppercase tracking-[0.3em]"
                    >
@@ -497,6 +447,7 @@ export default function BookingSystem() {
             </div>
           )}
         </motion.div>
+
       </motion.div>
 
       <AnimatePresence>

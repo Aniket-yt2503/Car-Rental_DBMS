@@ -80,43 +80,6 @@ function HeroStats() {
   )
 }
 
-// ── Bottom status bar ─────────────────────────────────────────────────────────
-function StatusBar({ videoEnded }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 1.8, duration: 0.6 }}
-      className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex items-center gap-4"
-    >
-      <div className="flex items-center gap-2.5 px-5 py-2.5 rounded-full"
-        style={{
-          background: 'rgba(255,255,255,0.03)',
-          border: '1px solid rgba(255,255,255,0.08)',
-          backdropFilter: 'blur(16px)',
-          WebkitBackdropFilter: 'blur(16px)',
-        }}
-      >
-        <div
-          className={!videoEnded ? 'animate-pulse' : ''}
-          style={{
-            width: 6, height: 6, borderRadius: '50%',
-            background: videoEnded ? '#d97706' : '#94a3b8',
-            boxShadow: videoEnded ? '0 0 8px rgba(217,119,6,0.6)' : '0 0 8px rgba(148,163,184,0.4)',
-            flexShrink: 0,
-          }}
-        />
-        <span className="text-white/40 text-[10px] uppercase tracking-[0.18em]">
-          {videoEnded ? 'Stealth Mode' : 'Live Preview'}
-        </span>
-        <div style={{ width: 1, height: 12, background: 'rgba(255,255,255,0.1)' }} />
-        <span className="text-white/25 text-[10px] font-mono tracking-wider">
-          {videoEnded ? 'Premium Fleet' : '∞ km/h'}
-        </span>
-      </div>
-    </motion.div>
-  )
-}
 
 // ── Cool Typing Animation ──────────────────────────────────────────────────────
 function Typewriter() {
@@ -219,7 +182,7 @@ export default function Hero() {
       </div>
 
       <HeroStats />
-      <StatusBar videoEnded={videoEnded} />
+
 
       <div
         className="relative flex flex-col justify-center min-h-screen px-6 md:px-12 lg:px-20 pt-28 pb-20"

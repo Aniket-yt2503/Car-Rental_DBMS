@@ -92,12 +92,7 @@ export default function Navbar() {
 
   function handleBookNow() {
     setMobileMenuOpen(false)
-    if (window.location.pathname !== '/') playPageSwitchSound()
-    navigate('/')
-    setTimeout(() => {
-      const el = document.getElementById('home')
-      if (el) el.scrollIntoView({ behavior: 'smooth' })
-    }, 80)
+    dispatch({ type: 'OPEN_BOOKING', payload: {} })
   }
 
   return (

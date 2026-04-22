@@ -119,12 +119,6 @@ export default function Footer() {
             </p>
           </div>
 
-          <div className="flex items-center gap-6">
-            <div className="flex items-center gap-2">
-              <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
-              <span className="text-slate-500 text-[10px] font-bold uppercase tracking-widest">Network Secure</span>
-            </div>
-          </div>
         </div>
       </div>
     </footer>
