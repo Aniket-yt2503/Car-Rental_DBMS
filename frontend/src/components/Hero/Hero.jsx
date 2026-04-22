@@ -15,14 +15,14 @@ const wordVariants = {
 
 const HEADLINE_WORDS = ['Drive', 'the', 'Future,', 'Today.']
 
-// ── Right-half cinematic video ────────────────────────────────────────────────
+// ── Fullscreen cinematic video ────────────────────────────────────────────────
 function CinematicVideo({ onEnded }) {
   const videoRef = useRef(null)
 
   useEffect(() => {
     const v = videoRef.current
     if (!v) return
-    v.muted = true          // belt-and-suspenders — no sound ever
+    v.muted = true
     v.volume = 0
     v.play().catch(() => {})
     const handleEnded = () => { if (onEnded) onEnded() }
@@ -31,127 +31,19 @@ function CinematicVideo({ onEnded }) {
   }, [onEnded])
 
   return (
-    /* Positioned on the RIGHT 55% — left side stays clean for text */
-    <div
-      className="absolute top-0 bottom-0 right-0 hidden lg:block overflow-hidden"
-      style={{ width: '55%', zIndex: 1 }}
-    >
+    <div className="absolute inset-0 overflow-hidden" style={{ zIndex: 1 }}>
       <video
         ref={videoRef}
         src={VIDEO_SRC}
         muted
         playsInline
         preload="auto"
-        style={{
-          position: 'absolute',
-          inset: 0,
-          width: '100%',
-          height: '100%',
-          objectFit: 'cover',
-          objectPosition: 'center center',
-        }}
+        className="w-full h-full object-cover"
+        style={{ opacity: 0.6 }} // Dim slightly so text remains readable
       />
-
-      {/* Left feather — blends into the dark background */}
-      <div className="absolute inset-y-0 left-0 w-48 pointer-events-none" style={{
-        background: 'linear-gradient(90deg, #050404 0%, rgba(5,4,4,0.85) 40%, rgba(5,4,4,0.3) 75%, transparent 100%)',
-      }} />
-      {/* Top fade */}
-      <div className="absolute inset-x-0 top-0 h-32 pointer-events-none" style={{
-        background: 'linear-gradient(180deg, #050404 0%, transparent 100%)',
-      }} />
-      {/* Bottom fade */}
-      <div className="absolute inset-x-0 bottom-0 h-44 pointer-events-none" style={{
-        background: 'linear-gradient(0deg, #050404 0%, rgba(5,4,4,0.5) 60%, transparent 100%)',
-      }} />
-      {/* Right edge fade */}
-      <div className="absolute inset-y-0 right-0 w-16 pointer-events-none" style={{
-        background: 'linear-gradient(270deg, #050404 0%, transparent 100%)',
-      }} />
-
-      {/* Cinematic grade — edge vignette */}
-      <div className="absolute inset-0 pointer-events-none" style={{
-        background: 'radial-gradient(ellipse 90% 90% at 65% 50%, transparent 35%, rgba(0,0,0,0.65) 100%)',
-      }} />
-      {/* Warm amber tone */}
-      <div className="absolute inset-0 pointer-events-none" style={{
-        background: 'linear-gradient(180deg, rgba(10,6,2,0.20) 0%, transparent 50%, rgba(20,8,2,0.35) 100%)',
-        mixBlendMode: 'multiply',
-      }} />
-    </div>
-  )
-}
-
-// ── Subtle noise grain overlay — cinematic texture ────────────────────────────
-function FilmGrain() {
-  return (
-    <div className="absolute inset-0 pointer-events-none" style={{ zIndex: 2, opacity: 0.035 }}>
-      <svg width="100%" height="100%" style={{ position: 'absolute', inset: 0 }}>
-        <filter id="grain">
-          <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch" />
-          <feColorMatrix type="saturate" values="0" />
-        </filter>
-        <rect width="100%" height="100%" filter="url(#grain)" />
-      </svg>
-    </div>
-  )
-}
-
-// ── Thin horizontal speed lines — motion feel ─────────────────────────────────
-const STREAKS = [
-  { top: '18%', width: 180, delay: 0.2,  dur: 3.2, opacity: 0.10 },
-  { top: '32%', width: 280, delay: 1.1,  dur: 3.8, opacity: 0.07 },
-  { top: '48%', width: 140, delay: 0.6,  dur: 2.8, opacity: 0.09 },
-  { top: '62%', width: 220, delay: 1.8,  dur: 3.5, opacity: 0.06 },
-  { top: '76%', width: 320, delay: 0.4,  dur: 4.0, opacity: 0.05 },
-]
-
-function SpeedLines() {
-  return (
-    <div className="absolute inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 3 }}>
-      <style>{`
-        @keyframes speedLine {
-          0%   { transform: translateX(105vw); opacity: 0; }
-          5%   { opacity: 1; }
-          95%  { opacity: 1; }
-          100% { transform: translateX(-10vw); opacity: 0; }
-        }
-      `}</style>
-      {STREAKS.map((s, i) => (
-        <div key={i} style={{
-          position: 'absolute', top: s.top, left: 0,
-          width: s.width, height: '1px',
-          background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.9), transparent)',
-          opacity: s.opacity,
-          animation: `speedLine ${s.dur}s linear ${s.delay}s infinite`,
-          willChange: 'transform',
-        }} />
-      ))}
-    </div>
-  )
-}
-
-// ── Ambient orbs — warm gold + cool silver, luxury palette ───────────────────
-function AmbientOrbs() {
-  return (
-    <div className="absolute inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 2 }}>
-      {/* Gold — top right */}
-      <div style={{
-        position: 'absolute', top: '-15%', right: '-5%',
-        width: '50vw', height: '50vw',
-        background: 'radial-gradient(circle, rgba(180,130,60,0.14) 0%, transparent 65%)',
-        filter: 'blur(90px)',
-        animation: 'orbA 26s ease-in-out infinite',
-        willChange: 'transform',
-      }} />
-      {/* Silver-blue — bottom right */}
-      <div style={{
-        position: 'absolute', bottom: '0%', right: '5%',
-        width: '35vw', height: '35vw',
-        background: 'radial-gradient(circle, rgba(160,170,200,0.10) 0%, transparent 65%)',
-        filter: 'blur(75px)',
-        animation: 'orbB 32s ease-in-out infinite',
-        willChange: 'transform',
+      {/* Dark gradient behind text to prevent overlap readability issues */}
+      <div className="absolute inset-y-0 left-0 w-full md:w-1/2" style={{
+        background: 'linear-gradient(90deg, rgba(5,4,4,0.9) 0%, rgba(5,4,4,0.6) 50%, transparent 100%)',
       }} />
     </div>
   )
@@ -314,25 +206,8 @@ export default function Hero() {
         overflow: 'hidden',   // hard clip — nothing escapes
       }}
     >
-      {/* ── 1. Video — right 55% only ── */}
+      {/* ── 1. Video — full screen ── */}
       <CinematicVideo onEnded={() => setVideoEnded(true)} />
-
-      {/* ── 1b. Left side dark atmosphere (video doesn't cover this) ── */}
-      <div className="absolute inset-0 pointer-events-none" style={{ zIndex: 1 }}>
-        <div style={{
-          position: 'absolute', inset: 0,
-          background: 'radial-gradient(ellipse 55% 70% at 20% 50%, rgba(30,20,10,0.35) 0%, transparent 70%)',
-        }} />
-      </div>
-
-      {/* ── 2. Film grain texture ── */}
-      <FilmGrain />
-
-      {/* ── 3. Ambient light orbs ── */}
-      <AmbientOrbs />
-
-      {/* ── 4. Speed lines ── */}
-      <SpeedLines />
 
       {/* ── 5. Cursor glow ── */}
       <motion.div

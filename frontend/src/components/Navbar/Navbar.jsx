@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { motion, useSpring, useTransform } from 'framer-motion'
+import { motion, useSpring, useTransform, AnimatePresence } from 'framer-motion'
 import { useNavigate, useLocation } from 'react-router-dom'
 import useMagneticHover from '../../hooks/useMagneticHover.js'
 import { useAppContext } from '../../context/AppContext.jsx'
