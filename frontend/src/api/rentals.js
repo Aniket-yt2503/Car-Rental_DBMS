@@ -15,6 +15,11 @@ export async function createRental(bookingResult) {
       start_date:       bookingResult.pickupDate   || new Date().toISOString().split('T')[0],
       odometer_before:  bookingResult.startOdometer || 0,
       promo_id:         bookingResult.promoId      || null,
+      end_date:           bookingResult.returnDate || null,
+      return_location_id: bookingResult.returnLocationId ? parseInt(bookingResult.returnLocationId.toString().replace('LOC-', ''), 10) : null,
+      odometer_after:     bookingResult.endOdometer || null,
+      gas_level_returned: bookingResult.fuelLevel ? bookingResult.fuelLevel.toLowerCase() : null,
+      rental_price:       bookingResult.finalPrice || null,
     };
 
     const res = await fetch(`${API_URL}/rentals`, {

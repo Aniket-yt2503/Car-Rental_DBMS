@@ -280,6 +280,14 @@ export default function BookingSystem() {
       requestedClass:    formData.requestedClass ?? chosenCar.carClass,
       pickupDate:        formData.pickupDate,
       startOdometer:     Number(startOdometer) || 0,
+      promoId:           activePromotion ? activePromotion.id : null,
+      
+      // New fields for completed bookings (if employee fills them out)
+      returnDate:        formData.returnDate || null,
+      returnLocationId:  formData.returnLocation || formData.pickupLocation,
+      endOdometer:       endOdometer ? Number(endOdometer) : null,
+      fuelLevel:         fuelLevel,
+      finalPrice:        finalPrice
     })
     setLoading(false)
     if (result.error) {

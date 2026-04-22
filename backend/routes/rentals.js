@@ -45,11 +45,21 @@ router.get('/active', async (req, res) => {
 });
 
 router.post('/', async (req, res) => {
-  const { customer_id, car_id, rent_location_id, requested_class, start_date, odometer_before, promo_id } = req.body;
+  const { 
+    customer_id, car_id, rent_location_id, requested_class, start_date, odometer_before, promo_id,
+    end_date, return_location_id, odometer_after, gas_level_returned, rental_price
+  } = req.body;
+
   try {
     const [result] = await pool.query(
-      'INSERT INTO Rental (customer_id, car_id, rent_location_id, requested_class, start_date, odometer_before, promo_id) VALUES (?,?,?,?,?,?,?)',
-      [customer_id, car_id, rent_location_id, requested_class, start_date, odometer_before, promo_id || null]
+      `INSERT INTO Rental 
+        (customer_id, car_id, rent_location_id, requested_class, start_date, odometer_before, promo_id, 
+         end_date, return_location_id, odometer_after, gas_level_returned, rental_price) 
+       VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`,
+      [
+        customer_id, car_id, rent_location_id, requested_class, start_date, odometer_before, promo_id || null,
+        end_date || null, return_location_id || null, odometer_after || null, gas_level_returned || null, rental_price || null
+      ]
     );
     res.json({ id: result.insertId });
   } catch (err) {

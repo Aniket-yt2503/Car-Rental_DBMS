@@ -25,22 +25,6 @@ function CinematicVideo({ onEnded }) {
     v.muted = true
     v.volume = 0
     v.play().catch(() => {})
-    
-    const handleEnded = () => {
-      if (onEnded) onEnded(true)
-      
-      // Wait 1 second and then loop
-      setTimeout(() => {
-        if (v) {
-          v.currentTime = 0;
-          v.play().catch(() => {});
-          if (onEnded) onEnded(false); // reset status bar
-        }
-      }, 1000);
-    }
-    
-    v.addEventListener('ended', handleEnded)
-    return () => v.removeEventListener('ended', handleEnded)
   }, [onEnded])
 
   return (
@@ -50,6 +34,8 @@ function CinematicVideo({ onEnded }) {
         src={VIDEO_SRC}
         muted
         playsInline
+        autoPlay
+        loop
         preload="auto"
         className="w-full h-full object-cover"
         style={{ opacity: 0.6 }} // Dim slightly so text remains readable
