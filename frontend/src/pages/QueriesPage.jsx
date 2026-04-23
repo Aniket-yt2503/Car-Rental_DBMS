@@ -4,16 +4,16 @@ import { motion, AnimatePresence } from 'framer-motion'
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
 
 const QUERIES = [
-  { id: 1, name: 'Active Manifest',       desc: 'Current operational renters identification' },
-  { id: 2, name: 'Fleet Deployment',      desc: 'Active assets currently assigned' },
-  { id: 3, name: 'Transaction Logs',      desc: 'Completed logistical assignments and revenue' },
-  { id: 4, name: 'Command Chain',         desc: 'Senior management identification' },
-  { id: 5, name: 'Client Registry',       desc: 'Full personnel database access' },
-  { id: 6, name: 'Internal Audit',        desc: 'Conflict detection between staff and clients' },
-  { id: 7, name: 'HQ Verification',       desc: 'Command center residency check' },
-  { id: 8, name: 'Short-Cycle Data',      desc: 'Minimal duration assignment logs' },
-  { id: 9, name: 'Value Optimized',       desc: 'Lowest revenue assignment identification' },
-  { id: 10, name: 'Dormant Assets',        desc: 'Inventory with zero deployment history' },
+  { id: 1, name: 'Active Renters',       desc: 'Identifies the last names of all customers currently holding an active rental agreement.' },
+  { id: 2, name: 'Deployed Fleet',      desc: 'Displays the make and color of every vehicle currently dispatched and rented out.' },
+  { id: 3, name: 'Completed Ledger',    desc: 'Financial log of all finalized rentals showing the unique ID and final rental price.' },
+  { id: 4, name: 'Management Registry', desc: 'Personnel record of all staff members currently assigned to management categories.' },
+  { id: 5, name: 'Client Database',     desc: 'Comprehensive directory listing the full names of all registered customers.' },
+  { id: 6, name: 'Conflict Audit',      desc: 'Detects if any employee is also a registered customer to identify potential conflicts.' },
+  { id: 7, name: 'HQ Presidential Check', desc: 'Verifies if the company President is currently stationed at the Hamilton headquarters.' },
+  { id: 8, name: 'Shortest Rentals',    desc: 'Retrieves the rental ID for assignments with the minimum completed duration.' },
+  { id: 9, name: 'Economic Baseline',   desc: 'Calculates the value of the cheapest completed rental across the entire history.' },
+  { id: 10, name: 'Dormant Inventory',  desc: 'Lists vehicle makes that have zero deployment history in the rental logs.' },
 ]
 
 export default function QueriesPage() {
