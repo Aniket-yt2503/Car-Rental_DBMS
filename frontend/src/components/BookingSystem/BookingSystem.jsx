@@ -11,7 +11,7 @@ import locations from '../../data/locations.js'
 import { useAppContext } from '../../context/AppContext.jsx'
 import SleekButton from '../ui/SleekButton.jsx'
 import CarSelector from './CarSelector.jsx'
-import { playUpgradeSound } from '../../utils/sound.js'
+import { playUpgradeSound, playBookingSuccessSound } from '../../utils/sound.js'
 
 const CLASS_ORDER = ['Subcompact', 'Compact', 'Sedan', 'Luxury']
 const FUEL_LEVELS = ['Empty', 'Quarter', 'Half', 'Three_Quarter', 'Full']
@@ -20,13 +20,6 @@ const UNIT_LABELS = { month: 'Month', '2weeks': '2 Wks', week: 'Week', day: 'Day
 function fmt(n) { return n.toFixed(2) }
 function locName(id) { return locations.find(l => l.id === id)?.name ?? id }
 
-function playMonzaSound() {
-  try {
-    const audio = new Audio('/monza.mp3')
-    audio.volume = 0.75
-    audio.play().catch(() => {})
-  } catch (e) { /* silent */ }
-}
 
 function ConfirmedOverlay({ onClose, car }) {
   return (
@@ -34,7 +27,7 @@ function ConfirmedOverlay({ onClose, car }) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[300] flex items-center justify-center backdrop-blur-3xl overflow-hidden"
+      className="fixed inset-0 z-[300] flex items-start md:items-center justify-center backdrop-blur-3xl overflow-y-auto p-4"
       style={{ background: 'rgba(5,5,5,0.98)' }}
     >
       {[1, 2, 3].map(i => (
@@ -271,7 +264,7 @@ export default function BookingSystem() {
       setError(result.error)
       return
     }
-    playMonzaSound()
+    playBookingSuccessSound()
     setConfirmed(true)
   }
 
@@ -296,16 +289,15 @@ export default function BookingSystem() {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.25 }}
-        className="fixed inset-0 z-[100] flex items-center justify-center p-4 backdrop-blur-3xl"
+        className="fixed inset-0 z-[100] flex items-start justify-center p-4 backdrop-blur-3xl overflow-y-auto"
         style={{ background: 'rgba(5,5,5,0.98)' }}
       >
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          className="w-full max-w-5xl overflow-y-auto scrollbar-none relative"
+          className="w-full max-w-5xl relative my-auto"
           style={{ 
-            maxHeight: '92dvh', 
             padding: '2rem 1rem',
             overscrollBehavior: 'contain',
             WebkitOverflowScrolling: 'touch'

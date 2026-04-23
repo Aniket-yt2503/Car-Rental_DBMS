@@ -103,8 +103,8 @@ export default function CarSelector({ onConfirm, onBack }) {
       <div className="fixed inset-0 z-[100] backdrop-blur-3xl flex flex-col" style={{ height: '100dvh', background: 'rgba(5,5,5,0.98)' }}>
         <div
           ref={scrollRef}
-          className="flex-1 min-h-0 scrollbar-none"
-          style={{ overflowY: 'scroll', overscrollBehavior: 'contain', WebkitOverflowScrolling: 'touch' }}
+          className="flex-1 min-h-0 overflow-y-auto"
+          style={{ WebkitOverflowScrolling: 'touch' }}
         >
         <div className="max-w-7xl mx-auto px-6 py-12 pb-40">
           {/* Header */}

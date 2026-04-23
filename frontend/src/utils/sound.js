@@ -446,3 +446,64 @@ export function playPageSwitchSound() {
 
   } catch (e) { /* silent */ }
 }
+
+/**
+ * Play a high-performance "Success" sound.
+ * Sequence: Quick engine rev → Turbo blow-off → Triumphant power-up chord.
+ */
+export function playBookingSuccessSound() {
+  try {
+    const ctx = getAudioCtx()
+    if (ctx.state === 'suspended') ctx.resume()
+    const now = ctx.currentTime
+    const master = ctx.createGain()
+    master.gain.setValueAtTime(0, now)
+    master.gain.linearRampToValueAtTime(1, now + 0.02)
+    master.connect(ctx.destination)
+
+    // 1. Quick Engine Rev
+    const revOsc = ctx.createOscillator()
+    const revGain = ctx.createGain()
+    revOsc.type = 'sawtooth'
+    revOsc.frequency.setValueAtTime(60, now)
+    revOsc.frequency.exponentialRampToValueAtTime(250, now + 0.4)
+    revOsc.frequency.exponentialRampToValueAtTime(150, now + 0.6)
+    revGain.gain.setValueAtTime(0.15, now)
+    revGain.gain.exponentialRampToValueAtTime(0.01, now + 0.7)
+    revOsc.connect(revGain); revGain.connect(master)
+    revOsc.start(now); revOsc.stop(now + 0.7)
+
+    // 2. Turbo Blow-off (Whoosh)
+    const bufSize = ctx.sampleRate * 0.5
+    const buf = ctx.createBuffer(1, bufSize, ctx.sampleRate)
+    const data = buf.getChannelData(0)
+    for (let i = 0; i < bufSize; i++) data[i] = (Math.random() * 2 - 1)
+    const noise = ctx.createBufferSource()
+    noise.buffer = buf
+    const filter = ctx.createBiquadFilter()
+    filter.type = 'bandpass'
+    filter.frequency.setValueAtTime(1200, now + 0.4)
+    filter.frequency.exponentialRampToValueAtTime(4000, now + 0.6)
+    const nGain = ctx.createGain()
+    nGain.gain.setValueAtTime(0, now + 0.4)
+    nGain.gain.linearRampToValueAtTime(0.2, now + 0.45)
+    nGain.gain.exponentialRampToValueAtTime(0.001, now + 0.8)
+    noise.connect(filter); filter.connect(nGain); nGain.connect(master)
+    noise.start(now + 0.4); noise.stop(now + 0.8)
+
+    // 3. Triumphant Chord (Maj7)
+    const freqs = [261.63, 329.63, 392, 493.88, 523.25] // C4, E4, G4, B4, C5
+    freqs.forEach((f, i) => {
+      const osc = ctx.createOscillator()
+      const g = ctx.createGain()
+      osc.type = 'sine'
+      osc.frequency.setValueAtTime(f, now + 0.6 + i * 0.05)
+      g.gain.setValueAtTime(0, now + 0.6 + i * 0.05)
+      g.gain.linearRampToValueAtTime(0.12, now + 0.65 + i * 0.05)
+      g.gain.exponentialRampToValueAtTime(0.001, now + 1.5 + i * 0.1)
+      osc.connect(g); g.connect(master)
+      osc.start(now + 0.6 + i * 0.05); osc.stop(now + 1.6)
+    })
+
+  } catch (e) { /* silent fail */ }
+}
